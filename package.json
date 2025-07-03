@@ -1,0 +1,16 @@
+{
+  "name": "the-simple-budget-app",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "start": "npm run start --prefix server",
+    "dev": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}
