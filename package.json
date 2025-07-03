@@ -8,5 +8,9 @@
     "dev": "npm run dev --prefix server",
     "client": "npm run dev --prefix client",
     "server": "npm run dev --prefix server"
-  }
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ]
 }
