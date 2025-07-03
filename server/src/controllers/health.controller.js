@@ -12,9 +12,14 @@ const authorizedHealthCheck = (req, res) => {
   const expectedKey = process.env.HEALTH_SECRET;
 
   if (!providedKey || providedKey !== expectedKey) {
-    ``
+    ``;
     console.error(
-      `\x1b[31mUnauthorized readiness check attempt from ${req.ip}\x1b[0m`
+      `\x1b[31mUnauthorized readiness check attempt from ${
+        req.ip ||
+        req.connection.remoteAddress ||
+        req.headers["x-forwarded-for"]?.split(",")[0] ||
+        "unknown"
+      }\x1b[0m`
     );
 
     res.status(403).json({
