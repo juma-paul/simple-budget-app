@@ -20,6 +20,12 @@ app.use("/api/sys", healthRoutes);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));
   app.get("*", (req, res) => {
+    if (req.path.startsWith("/api")) {
+      return res.status(404).json({
+        error:
+          "404 — This page doesn't exist or you don't have permission to view it.",
+      });
+    }
     res.sendFile(path.join(__dirname, "../client/dist/index.html"));
   });
 }
