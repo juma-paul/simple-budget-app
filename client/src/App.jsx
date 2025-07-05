@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { BrowserRouter } from "react-router-dom";
+import Header from "./components/Header";
 
 function App() {
-  return <p className="font-bold p-3 max-w-2xl mx-auto">Hello, Tailwindcss</p>;
+  return (
+    <div>
+      <Header />
+    </div>
+  );
 }
 
 export default App;

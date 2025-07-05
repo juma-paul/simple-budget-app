@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-primary: "Roboto Flex", "Inter";
+  --font-primary: "Roboto Flex", "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   --color-dark-blue: #04254b;
   --color-error: #dc2626;
   --color-success: #059669;
@@ -13,4 +14,10 @@
   --color-orange-txt: #df6d08;
   --color-orange-btn: #df6d08e5;
   --color-orange-bg: #d66b0eb2;
+
+  /* Custom breakpoints */
+  --breakpoint-*: initial;
+  --breakpoint-tablet: 40rem;
+  --breakpoint-laptop: 64rem;
+  --breakpoint-desktop: 80rem;
 }
