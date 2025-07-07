@@ -20,7 +20,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <ul className="hidden tablet:flex items-center text-black text-xs laptop:text-sm  space-x-2 laptop:space-x-3 desktop:space-x-4">
+        <ul className="hidden tablet:flex items-center text-black text-xs space-x-2 laptop:space-x-3 desktop:space-x-4">
           <Link
             to="/about"
             className="hover:opacity-80 transition-opacity hover:text-orange-txt"
@@ -78,27 +78,27 @@ export default function Header() {
       {/* Mobile navigation menu */}
       {isMenuOpen && (
         <div className="tablet:hidden absolute top-full left-0 right-0 bg-dark-blue border-t border-white-ln">
-          <ul className="flex flex-col text-white-bg space-y-4 p-6">
+          <ul className="flex flex-col text-white-bg space-y-4 p-4">
             <Link
               to="/about"
               onClick={toggleMenu}
               className="hover:opacity-70 transition-opacity hover:text-orange-txt"
             >
-              <li className="text-base font-normal">About Us</li>
+              <li className="text-sm font-normal">About Us</li>
             </Link>
             <Link
               to="/reviews"
               onClick={toggleMenu}
               className="hover:opacity-70 transition-opacity hover:text-orange-txt"
             >
-              <li className="text-base font-normal">Reviews</li>
+              <li className="text-sm font-normal">Reviews</li>
             </Link>
             <Link
               to="/signup"
               onClick={toggleMenu}
               className="hover:opacity-70 transition-opacity hover:text-orange-txt"
             >
-              <li className="text-base font-normal">Sign Up</li>
+              <li className="text-sm font-normal">Sign Up</li>
             </Link>
           </ul>
         </div>
