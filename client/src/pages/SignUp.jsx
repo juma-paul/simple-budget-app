@@ -1,7 +1,5 @@
 import React from 'react'
 
 export default function SignUp() {
-  return (
-    <div>SignUp</div>
-  )
+  return <div className="mt-20">SignUp</div>;
 }
