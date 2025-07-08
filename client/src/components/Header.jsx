@@ -15,7 +15,7 @@ export default function Header() {
           <img
             src="/src/assets/SBA_Logo.png"
             alt="Logo"
-            className="h-5.5 tablet:h-8 laptop:h-10"
+            className="h-6 tablet:h-8 laptop:h-10"
           />
         </Link>
 
@@ -25,7 +25,7 @@ export default function Header() {
             to="/about"
             className="hover:opacity-80 transition-opacity hover:text-orange-txt"
           >
-            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium">
+            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium whitespace-nowrap">
               About Us
             </li>
           </Link>
@@ -41,7 +41,7 @@ export default function Header() {
             to="/signup"
             className="hover:opacity-80 transition-opacity hover:text-orange-txt"
           >
-            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium">
+            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium whitespace-nowrap">
               Sign Up
             </li>
           </Link>
@@ -49,7 +49,7 @@ export default function Header() {
             to="/login"
             className="hover:opacity-80 transition-opacity hover:text-orange-txt"
           >
-            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium">
+            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium whitespace-nowrap">
               Log In
             </li>
           </Link>
@@ -58,7 +58,7 @@ export default function Header() {
         {/* Mobile Login + Hamburger */}
         <div className="tablet:hidden flex items-center space-x-3">
           <Link to="/login" className="hover:opacity-80 transition-opacity">
-            <span className="text-black text-xs px-1.5 py-1 font-medium bg-white-bg rounded-full hover:text-orange-txt">
+            <span className="text-black text-xs px-2 py-1 font-bold bg-white-bg rounded-full hover:text-orange-txt whitespace-nowrap">
               Log In
             </span>
           </Link>
@@ -84,7 +84,9 @@ export default function Header() {
               onClick={toggleMenu}
               className="hover:opacity-70 transition-opacity hover:text-orange-txt"
             >
-              <li className="text-sm font-normal">About Us</li>
+              <li className="text-sm font-normal whitespace-nowrap">
+                About Us
+              </li>
             </Link>
             <Link
               to="/reviews"
@@ -98,7 +100,7 @@ export default function Header() {
               onClick={toggleMenu}
               className="hover:opacity-70 transition-opacity hover:text-orange-txt"
             >
-              <li className="text-sm font-normal">Sign Up</li>
+              <li className="text-sm font-normal whitespace-nowrap">Sign Up</li>
             </Link>
           </ul>
         </div>
