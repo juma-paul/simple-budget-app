@@ -11,21 +11,25 @@ import Footer from "./components/Footer";
 function App() {
   return (
     <BrowserRouter>
-      {/* Header */}
-      <Header />
+      <div className="min-h-screen flex flex-col">
+        {/* Header */}
+        <Header />
 
-      {/* Routes */}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<LogIn />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/signup" element={<SignUp />} />
-      </Routes>
+        {/* Main content - grows to fill available space */}
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/signup" element={<SignUp />} />
+          </Routes>
+        </main>
 
-      {/* Footer */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }
