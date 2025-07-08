@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
     <footer className="px-4 text-[0.50rem] tablet:text-xs bg-white-bg h-12 tablet:h-14 laptop:h-16 flex items-center justify-between">
@@ -12,12 +14,12 @@ export default function Footer() {
 
       {/* Right side: Links */}
       <div className="flex flex-col">
-        <a href="/terms" className="hover:underline hover:text-orange-txt">
+        <Link to="/terms" className="hover:underline hover:text-orange-txt">
           Terms of service
-        </a>
-        <a href="/privacy" className="hover:underline hover:text-orange-txt">
+        </Link>
+        <Link to="/privacy" className="hover:underline hover:text-orange-txt">
           Privacy policy
-        </a>
+        </Link>
       </div>
     </footer>
   );
