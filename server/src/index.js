@@ -29,6 +29,19 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "../client/dist/index.html"));
   });
 }
+
+// Global error handler middleware
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server error";
+  return res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+    data: {},
+  });
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
