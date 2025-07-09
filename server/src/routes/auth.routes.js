@@ -5,12 +5,14 @@ import {
   signUp,
   logIn,
   refreshAccessToken,
+  google,
 } from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
 router.post("/signup", registerValidation, validate, signUp);
 router.post("/login", logIn);
+router.post("/google", google);
 router.post("/refresh", refreshAccessToken);
 
 export default router;
