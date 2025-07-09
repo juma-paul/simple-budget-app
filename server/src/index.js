@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import path from "path";
+import cookieParser from "cookie-parser";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 
@@ -14,6 +15,7 @@ app.use(express.json());
 process.env.NODE_ENV === "production"
   ? app.use(morgan("combined"))
   : app.use(morgan("dev"));
+app.use(cookieParser());
 
 // API routes
 app.use("/api/sys", healthRoutes);

@@ -108,3 +108,31 @@ export const logIn = async (req, res, next) => {
     );
   }
 };
+
+// Generate a refresh token
+export const refreshAccessToken = async (req, res, next) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return next(errorHandler(401, "Refresh token missing"));
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    const newAccessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15" }
+    );
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      maxAge: 15 * 60 * 1000,
+    });
+    return successResponse(res, 200, "Access token refreshed.");
+  } catch (error) {
+    return next(errorHandler(403, "Invalid refresh token"));
+  }
+};
