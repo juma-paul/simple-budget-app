@@ -1,5 +1,6 @@
 import "@dotenvx/dotenvx/config";
 import express from "express";
+import mongoose from "mongoose";
 import morgan from "morgan";
 import path from "path";
 import healthRoutes from "./routes/health.routes.js";
@@ -44,7 +45,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+const port = process.env.PORT || 6798;
+
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.DATABASE_URL);
+    console.log("✅ Connected to MongoDB");
+
+    app.listen(port, () => {
+      console.log(`Server running at http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to connect to MongoDB:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
