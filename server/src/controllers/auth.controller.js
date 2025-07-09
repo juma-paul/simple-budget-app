@@ -237,3 +237,15 @@ export const google = async (req, res, next) => {
     );
   }
 };
+
+// Logout a user
+export const logOut = (req, res) => {
+  const cookieOptions = { httpOnly: true, sameSite: "strict", secure: true };
+  const tokens = ["accessToken", "refreshToken"];
+
+  tokens.forEach((element) => {
+    res.clearCookie(element, cookieOptions);
+  });
+
+  return successResponse(res, 200, "You've been logged out successfully.");
+};
