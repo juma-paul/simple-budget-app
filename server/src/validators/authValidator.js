@@ -9,7 +9,7 @@ export const registerValidation = [
   body("username")
     .trim()
     .isLength({ min: 4, max: 12 })
-    .withMessage("Username must be between 3-12 characters")
+    .withMessage("Username must be between 4-12 characters")
     .isAlphanumeric()
     .withMessage("Username must contain only letters and numbers."),
 

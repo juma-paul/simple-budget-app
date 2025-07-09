@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import path from "path";
 import healthRoutes from "./routes/health.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const __dirname = path.resolve();
 const app = express();
@@ -15,6 +16,7 @@ process.env.NODE_ENV === "production"
 
 // API routes
 app.use("/api/sys", healthRoutes);
+app.use("/api/auth", authRoutes);
 
 // Static files from client build (production)
 if (process.env.NODE_ENV === "production") {
