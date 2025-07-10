@@ -1,29 +1,73 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Layout from "./components/Layout";
+
 import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import Dashboard from "./pages/Dashboard";
 import LogIn from "./pages/LogIn";
 import Reviews from "./pages/Reviews";
 import SignUp from "./pages/SignUp";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 
 function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen flex flex-col">
-        {/* Header */}
+        {/* Fixed Header */}
         <Header />
 
-        {/* Main content - grows to fill available space */}
+        {/* Main content with padding from layout - grows to fill available space */}
         <main className="flex-1">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<AboutUs />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/login" element={<LogIn />} />
-            <Route path="/reviews" element={<Reviews />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/"
+              element={
+                <Layout>
+                  <Home />
+                </Layout>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <Layout>
+                  <AboutUs />
+                </Layout>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <Layout>
+                  <LogIn />
+                </Layout>
+              }
+            />
+            <Route
+              path="/reviews"
+              element={
+                <Layout>
+                  <Reviews />
+                </Layout>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <Layout>
+                  <SignUp />
+                </Layout>
+              }
+            />
           </Routes>
         </main>
 
