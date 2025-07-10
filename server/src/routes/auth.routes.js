@@ -1,5 +1,5 @@
 import express from "express";
-import { registerValidation } from "../validators/authValidator.js";
+import { signUpValidation } from "../validators/authValidator.js";
 import { validate } from "../middleware/validate.js";
 import {
   signUp,
@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.post("/signup", registerValidation, validate, signUp);
+router.post("/signup", signUpValidation, validate, signUp);
 router.post("/login", logIn);
 router.post("/google", google);
 router.post("/logout", logOut);
