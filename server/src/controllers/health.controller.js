@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import sendEmail from "../utils/sendEmail.js";
 
 const formatUpTime = (seconds) => {
   const hrs = Math.floor(seconds / 3600);
@@ -12,7 +13,6 @@ const authorizedHealthCheck = (req, res) => {
   const expectedKey = process.env.HEALTH_SECRET;
 
   if (!providedKey || providedKey !== expectedKey) {
-    ``
     console.error(
       `\x1b[31mUnauthorized readiness check attempt from ${req.ip}\x1b[0m`
     );
@@ -36,6 +36,23 @@ export const healthCheck = (req, res) => {
     timestamp: new Date().toLocaleString(),
     uptime: formatUpTime(process.uptime()),
   });
+};
+
+// Test email
+export const testEmail = async (req, res, next) => {
+  if (!authorizedHealthCheck(req, res)) return;
+  try {
+    await sendEmail({
+      to: "jpaul@lincolnucasf.edu",
+      subject: "Account Deletion Notice",
+      text: `Hi, Juma, your account will be permanently deleted in 3 days. If this was a mistake, please log in to restore it.`,
+    });
+    return res
+      .status(200)
+      .json({ message: "Test email sent to jpaul@lincolnucasf.edu" });
+  } catch (error) {
+    return next(errorHandler(500, "Email failed to send."));
+  }
 };
 
 // Readiness check
