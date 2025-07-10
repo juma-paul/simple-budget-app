@@ -6,6 +6,11 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
+
+// Register background tasks
+import "./tasks/deleteExpiredUsers.js";
+import "./tasks/accountReminder.js";
 
 const __dirname = path.resolve();
 const app = express();
@@ -20,6 +25,7 @@ app.use(cookieParser());
 // API routes
 app.use("/api/sys", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 // Static files from client build (production)
 if (process.env.NODE_ENV === "production") {

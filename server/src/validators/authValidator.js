@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-export const registerValidation = [
+export const signUpValidation = [
   body("email")
     .isEmail()
     .withMessage("Please enter a valid email.")
