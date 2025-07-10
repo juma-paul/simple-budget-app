@@ -123,9 +123,33 @@ export const deleteUser = async (req, res, next) => {
     return successResponse(
       res,
       200,
-      `Your account is scheduled for deletion on ${formatedDate}. You can restore it any time before then.`
+      `Your account is scheduled for deletion on ${formatedDate}, 30 days from now. You can restore it any time before then.`
     );
   } catch (error) {
     return next(errorHandler(500, "Failed to delete user."));
+  }
+};
+
+// Restore deleted user within 30 days
+export const restoreUser = async (req, res, next) => {
+  if (req.userId !== req.params.id) {
+    return next(
+      errorHandler(403, "You are unauthorized to restore this account.")
+    );
+  }
+
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || !user.isDeleted) {
+      return next(errorHandler(400, "Account is not marked for deletion."));
+    }
+
+    user.isDeleted = false;
+    user.deletionScheduledAt = null;
+    await user.save();
+
+    return successResponse(res, 200, "Your account has been restored.");
+  } catch (error) {
+    return next(errorHandler(500, "Failed to restore account."));
   }
 };
