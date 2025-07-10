@@ -86,3 +86,46 @@ export const updateUser = async (req, res, next) => {
     return next(errorHandler(500, "Something went wrong while updating user."));
   }
 };
+
+// Delete a user's account
+export const deleteUser = async (req, res, next) => {
+  if (req.userId !== req.params.id) {
+    return next(errorHandler(401, "You can delete only your account!"));
+  }
+
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return next(errorHandler(404, "User not found!"));
+    }
+
+    const validPassword = await bcrypt.compare(
+      req.body.currentPassword,
+      user.password
+    );
+    if (!validPassword) {
+      return next(errorHandler(401, "The password you entered is incorrect."));
+    }
+
+    // Schedule soft delete
+    user.isDeleted = true;
+    user.deletionScheduledAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 Days
+    const formatedDate = user.deletionScheduledAt.toLocaleDateString(
+      undefined,
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }
+    );
+    await user.save();
+
+    return successResponse(
+      res,
+      200,
+      `Your account is scheduled for deletion on ${formatedDate}. You can restore it any time before then.`
+    );
+  } catch (error) {
+    return next(errorHandler(500, "Failed to delete user."));
+  }
+};
