@@ -7,6 +7,7 @@ import { errorHandler } from "../utils/errorHandler.js";
 // Create a new user
 export const signUp = async (req, res, next) => {
   try {
+    console.log(req.body)
     const { username, email, password, acceptedTerms, acceptedPrivacy } =
       req.body;
     if (!username || !email || !password) {
