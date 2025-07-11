@@ -1,19 +1,13 @@
-import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
-import {
-  setLoading,
-  setError,
-  setSuccess,
-  setMessage,
-  clearUIState,
-} from "../ui/uiSlice";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { setLoading, setError, setSuccess, setMessage, clearUIState } from "../ui/uiSlice";
 
 // Sign Up
 export const signUpUser = createAsyncThunk(
   "user/signUpUser",
   async (formData, thunkAPI) => {
     const dispatch = thunkAPI.dispatch;
-    dispatch(setLoading(true));
     dispatch(clearUIState());
+    dispatch(setLoading(true));
 
     try {
       const res = await fetch("/api/auth/signup", {
@@ -24,14 +18,17 @@ export const signUpUser = createAsyncThunk(
 
       const data = await res.json();
 
-      if (!data.success) throw new Error(data.message);
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
       dispatch(setSuccess(true));
-      dispatch(setMessage(data.message));
-      return;
+      dispatch(setMessage(data.message || "Signup successful"));
+      return data;
     } catch (error) {
-      dispatch(setError(error.message));
-      dispatch(setSuccess(false));
-      return thunkAPI.rejectWithValue(null);
+      dispatch(setError(true));
+      dispatch(setMessage(error.message || "Something went wrong"));
+      return thunkAPI.rejectWithValue(error.message);
     } finally {
       dispatch(setLoading(false));
     }

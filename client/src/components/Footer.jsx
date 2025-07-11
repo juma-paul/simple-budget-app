@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="px-4 text-[0.50rem] tablet:text-xs bg-white-bg h-12 tablet:h-14 laptop:h-16 flex items-center justify-between">
+    <footer className="px-4 text-[0.45rem] tablet:text-xs bg-white-bg h-12 tablet:h-14 laptop:h-16 flex items-center justify-between">
       {/* Left side: Copyright */}
       <div className="flex items-center space-x-1.5">
         <span>&copy; {new Date().getFullYear()}</span>

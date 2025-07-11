@@ -9,21 +9,6 @@ export default function SignUp() {
   const navigate = useNavigate();
   const { loading, success, error, message } = useSelector((state) => state.ui);
   const [formData, setFormData] = useState({});
-  console.log(formData);
-  useEffect(() => {
-    let timeout;
-    if (success || error) {
-      timeout = setTimeout(() => {
-        dispatch(clearUIState());
-      }, 4000); // 4 seconds
-    }
-
-    return () => clearTimeout(timeout);
-  }, [success, error, dispatch]);
-
-  useEffect(() => {
-    if (success) navigate("/login");
-  }, [success, navigate]);
 
   const handleChange = (e) => {
     const { id, type, value, checked } = e.target;
@@ -37,8 +22,31 @@ export default function SignUp() {
     e.preventDefault();
     dispatch(signUpUser(formData));
   };
+
   const isDisabled =
     !formData.acceptedTerms || !formData.acceptedPrivacy || loading;
+
+  // Show message, then navigate after message clears
+  useEffect(() => {
+    if (success) {
+      const timeout = setTimeout(() => {
+        dispatch(clearUIState());
+        navigate("/login");
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [success, dispatch, navigate]);
+
+  // Show error and clear after 3s
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        dispatch(clearUIState());
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error, dispatch]);
 
   return (
     <section>
@@ -62,25 +70,28 @@ export default function SignUp() {
         >
           <input
             type="text"
-            placeholder="Username"
             id="username"
-            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm"
+            autoComplete="username"
+            placeholder="Username"
+            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm italic"
             onChange={handleChange}
             required
           />
           <input
             type="email"
-            placeholder="Email address"
             id="email"
-            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm"
+            autoComplete="email"
+            placeholder="Email address"
+            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm italic"
             onChange={handleChange}
             required
           />
           <input
             type="password"
-            placeholder="Password"
             id="password"
-            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm"
+            autoComplete="new-password"
+            placeholder="Password"
+            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm italic"
             onChange={handleChange}
             required
           />
@@ -121,37 +132,50 @@ export default function SignUp() {
             </label>
           </div>
 
+          {error && (
+            <p className="text-white  bg-orange-txt px-2 py-2 rounded-lg mt-2 text-center">
+              {message || "Something went wrong"}
+            </p>
+          )}
+          {success && (
+            <p className="text-white bg-orange-txt px-4 py-2 rounded-lg mt-2 text-center">
+              {message || "Success!"}
+            </p>
+          )}
+
           <button
             disabled={isDisabled}
             type="submit"
-            className="bg-slate-700 text-white text-[0.75rem] tablet:text-xs p-1 rounded-lg uppercase hover:text-orange-400"
+            className={`bg-slate-800 text-white text-[0.75rem] tablet:text-xs p-1 rounded-lg hover:text-orange-bg uppercase transition-opacity ${
+              isDisabled ? "opacity-50 cursor-not-allowed" : "opacity-100"
+            }`}
           >
             {loading ? "Loading..." : "Sign Up"}
           </button>
         </form>
 
         {/* Divider: Overlapping bottom edge slightly */}
-        <div className="flex items-center w-full mt-1 mb-1">
-          <div className="flex-1 h-px bg-white-ln" />
-          <span className="px-2 text-white-txt text-sm capitalize">or</span>
-          <div className="flex-1 h-px bg-white-ln" />
+        <div className="flex items-center w-full mt-1/2 mb-1/2">
+          <div className="flex-1 h-[0.005rem] bg-white-ln" />
+          <span className="px-2 text-white-txt text-xs capitalize">or</span>
+          <div className="flex-1 h-[0.005rem] bg-white-ln" />
         </div>
 
         {/* Google Sign-in Button */}
         <button
           disabled={isDisabled}
           type="button"
-          className="bg-green-700 text-white text-[0.75rem] tablet:text-xs w-full rounded-lg p-1 uppercase hover:opacity-90 mb-2"
+          className={`bg-green-900 text-white text-[0.75rem] tablet:text-xs w-full rounded-lg hover:text-orange-bg p-1 uppercase hover:opacity-90 mb-2 transition-opacity ${
+            isDisabled ? "opacity-70 cursor-not-allowed" : "opacity-100"
+          }`}
         >
           Continue with Google
         </button>
-        <p className="text-error mt-2">{error && message}</p>
-        <p className="text-success mt-2">{success && message}</p>
 
         <div className="flex gap-2 mt-2 mb-2 justify-center text-[0.75rem] tablet:text-xs">
           <p>Already have an account? </p>
           <Link to="/login">
-            <span className="text-dark-blue">Log In</span>
+            <span className="text-blue-500">Log In</span>
           </Link>
         </div>
       </div>
