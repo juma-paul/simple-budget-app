@@ -79,6 +79,42 @@ export const logInUser = createAsyncThunk(
   }
 );
 
+// Log out (API call, credentials needed)
+export const logOutUser = createAsyncThunk(
+  "user/logOutUser",
+  async (_, thunkAPI) => {
+    const dispatch = thunkAPI.dispatch;
+
+    dispatch(clearUIState());
+    dispatch(setLoading(true));
+
+    try {
+      const res = await fatch("api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Logout failed");
+      }
+
+      dispatch(setSuccess(true));
+      dispatch(setMessage(data.message || "Logout successful"));
+
+      return data;
+    } catch (error) {
+      dispatch(setError(true));
+      dispatch(setMessage(error.message || "Something went wrong!"));
+
+      return thunkAPI.rejectWithValue(error.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -98,8 +134,11 @@ const userSlice = createSlice({
     builder.addCase(logInUser.fulfilled, (state, action) => {
       state.currentUser = action.payload;
     });
+
+    builder.addCase(logOutUser.fulfilled, (state, action) => {
+      state.currentUser = null;
+    });
   },
 });
 
-export const { logOut } = userSlice.actions;
 export default userSlice.reducer;
