@@ -181,54 +181,57 @@ export const google = async (req, res, next) => {
       const randomAssignedPassword =
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8);
+
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(
+        randomAssignedPassword,
+        saltRounds
+      );
+
+      // 2. Take their first name and concatenat random digits for uniqueness
+      const base = name.split(" ")[0].toLowerCase();
+      const suffix = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+      const username = `${base}${suffix}`;
+
+      // 3. Create and save new user and generate access and refresh tokens for user
+      const newUser = new User({
+        username: username,
+        email: email,
+        password: hashedPassword,
+        profilePicture: photo,
+      });
+      await newUser.save();
+
+      const accessToken = jwt.sign(
+        { id: newUser._id },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "15m",
+        }
+      );
+      const refreshToken = jwt.sign(
+        { id: newUser._id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      const { password: _, ...userData } = newUser._doc;
+
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: true,
+        maxAge: 15 * 60 * 1000,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      return successResponse(res, 201, "User created successfully.", userData);
     }
-
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(
-      randomAssignedPassword,
-      saltRounds
-    );
-
-    // 2. Take their first name and concatenat random digits for uniqueness
-    const base = name.split(" ")[0].toLowerCase();
-    const suffix = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
-    const username = `${base}${suffix}`;
-
-    // 3. Create and save new user and generate access and refresh tokens for user
-    const newUser = new User({
-      username: username,
-      email: email,
-      password: hashedPassword,
-      profilePicture: photo,
-    });
-    await newUser.save();
-
-    const accessToken = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "15m",
-    });
-    const refreshToken = jwt.sign(
-      { id: newUser._id },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    const { password: _, ...userData } = newUser._doc;
-
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      sameSite: "strict",
-      secure: true,
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: "strict",
-      secure: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    return successResponse(res, 201, "User created successfully.", userData);
   } catch (error) {
     console.error("User creation error:", error);
 
