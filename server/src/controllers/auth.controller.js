@@ -246,9 +246,12 @@ export const logOut = (req, res) => {
   const cookieOptions = { httpOnly: true, sameSite: "strict", secure: true };
   const tokens = ["accessToken", "refreshToken"];
 
-  tokens.forEach((element) => {
-    res.clearCookie(element, cookieOptions);
-  });
-
-  return successResponse(res, 200, "You've been logged out successfully.");
+  try {
+    tokens.forEach((element) => {
+      res.clearCookie(element, cookieOptions);
+    });
+    return successResponse(res, 200, "You've been logged out successfully.");
+  } catch (error) {
+    return next(errorHandler(500, "Logout failed. Please try again."));
+  }
 };
