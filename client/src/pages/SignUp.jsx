@@ -73,7 +73,7 @@ export default function SignUp() {
             id="username"
             autoComplete="username"
             placeholder="Username"
-            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm italic"
+            className="bg-white-ln p-[0.25rem] rounded-lg text-xs tablet:text-sm italic pl-4"
             onChange={handleChange}
             required
           />
@@ -82,7 +82,7 @@ export default function SignUp() {
             id="email"
             autoComplete="email"
             placeholder="Email address"
-            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm italic"
+            className="bg-white-ln p-[0.25rem] rounded-lg text-xs tablet:text-sm italic pl-4"
             onChange={handleChange}
             required
           />
@@ -91,13 +91,13 @@ export default function SignUp() {
             id="password"
             autoComplete="new-password"
             placeholder="Password"
-            className="bg-white-ln p-1 rounded-lg text-[0.75rem] tablet:text-sm italic"
+            className="bg-white-ln p-[0.25rem] rounded-lg text-xs tablet:text-sm italic pl-4"
             onChange={handleChange}
             required
           />
 
           {/* Terms and Privacy */}
-          <div className="flex items-start text-white-txt gap-1 text-[0.6rem] tablet:text-xs">
+          <div className="flex items-start text-white-txt gap-1 text-xs">
             <input
               type="checkbox"
               id="acceptedTerms"
@@ -105,7 +105,7 @@ export default function SignUp() {
               onChange={handleChange}
               required
             />
-            <label htmlFor="terms">
+            <label htmlFor="terms of service">
               I accept the
               <Link to="/terms" className="hover:text-dark-blue underline ml-1">
                 general terms of service & conditions of use
@@ -113,7 +113,7 @@ export default function SignUp() {
             </label>
           </div>
 
-          <div className="flex items-start text-white-txt gap-1 text-[0.6rem] tablet:text-xs">
+          <div className="flex items-start text-white-txt gap-1 text-xs">
             <input
               type="checkbox"
               id="acceptedPrivacy"
@@ -121,7 +121,7 @@ export default function SignUp() {
               onChange={handleChange}
               required
             />
-            <label htmlFor="privacy">
+            <label htmlFor="privacy policy">
               I accept the
               <Link
                 to="/privacy"
@@ -146,7 +146,7 @@ export default function SignUp() {
           <button
             disabled={isDisabled}
             type="submit"
-            className={`bg-slate-800 text-white text-[0.75rem] tablet:text-xs p-1 rounded-lg hover:text-orange-bg uppercase transition-opacity ${
+            className={`bg-slate-800 text-white font-bold text-xs tablet:text-sm p-[0.25rem] rounded-lg hover:text-orange-bg uppercase transition-opacity ${
               isDisabled ? "opacity-50 cursor-not-allowed" : "opacity-100"
             }`}
           >
@@ -156,26 +156,26 @@ export default function SignUp() {
 
         {/* Divider: Overlapping bottom edge slightly */}
         <div className="flex items-center w-full mt-1/2 mb-1/2">
-          <div className="flex-1 h-[0.005rem] bg-white-ln" />
-          <span className="px-2 text-white-txt text-xs capitalize">or</span>
-          <div className="flex-1 h-[0.005rem] bg-white-ln" />
+          <div className="flex-1 h-[0.005rem] bg-slate-400" />
+          <span className="px-2 text-slate-400 text-xs capitalize">or</span>
+          <div className="flex-1 h-[0.005rem] bg-slate-400" />
         </div>
 
         {/* Google Sign-in Button */}
         <button
           disabled={isDisabled}
           type="button"
-          className={`bg-green-900 text-white text-[0.75rem] tablet:text-xs w-full rounded-lg hover:text-orange-bg p-1 uppercase hover:opacity-90 mb-2 transition-opacity ${
-            isDisabled ? "opacity-70 cursor-not-allowed" : "opacity-100"
+          className={`bg-green-900 text-white font-bold text-xs tablet:text-sm w-full rounded-lg hover:text-orange-bg p-[0.25rem] uppercase hover:opacity-90 mb-2 transition-opacity ${
+            isDisabled ? "opacity-40 cursor-not-allowed" : "opacity-100"
           }`}
         >
           Continue with Google
         </button>
 
-        <div className="flex gap-2 mt-2 mb-2 justify-center text-[0.75rem] tablet:text-xs">
+        <div className="flex gap-2 mt-2 mb-2 justify-center text-xs pb-4">
           <p>Already have an account? </p>
           <Link to="/login">
-            <span className="text-blue-500">Log In</span>
+            <span className="text-dark-blue hover:text-slate-400">Log In</span>
           </Link>
         </div>
       </div>
