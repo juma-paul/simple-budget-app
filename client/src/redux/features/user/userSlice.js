@@ -1,5 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { setLoading, setError, setSuccess, setMessage, clearUIState } from "../ui/uiSlice";
+import {
+  setLoading,
+  setError,
+  setSuccess,
+  setMessage,
+  clearUIState,
+} from "../ui/uiSlice";
 
 // Sign Up
 export const signUpUser = createAsyncThunk(
@@ -35,15 +41,63 @@ export const signUpUser = createAsyncThunk(
   }
 );
 
+// Log In
+export const logInUser = createAsyncThunk(
+  "user/logInUser",
+  async (formData, thunkAPI) => {
+    const dispatch = thunkAPI.dispatch;
+
+    dispatch(clearUIState());
+    dispatch(setLoading(true));
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong!");
+      }
+
+      dispatch(setSuccess(true));
+      dispatch(setMessage(data.message || `Login successful`));
+
+      return data;
+    } catch (error) {
+      dispatch(setError(true));
+      dispatch(setMessage(error.message || "Something went wrong!"));
+
+      return thunkAPI.rejectWithValue(error.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
     currentUser: null,
+    signupSuccess: false,
   },
-  reducers: {
-    logOut: (state) => {
-      state.currentUser = null;
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(signUpUser.fulfilled, (state, action) => {
+      state.signupSuccess = true;
+    });
+
+    builder.addCase(signUpUser.pending, (state, action) => {
+      state.signupSuccess = false;
+    });
+
+    builder.addCase(logInUser.fulfilled, (state, action) => {
+      state.currentUser = action.payload;
+    });
   },
 });
 
