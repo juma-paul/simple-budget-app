@@ -32,18 +32,18 @@ export default function SignUp() {
       const timeout = setTimeout(() => {
         dispatch(clearUIState());
         navigate("/login");
-      }, 3000);
+      }, 500);
 
       return () => clearTimeout(timeout);
     }
   }, [success, dispatch, navigate]);
 
-  // Show error and clear after 3s
+  // Show error and clear after delay
   useEffect(() => {
     if (error) {
       const timeout = setTimeout(() => {
         dispatch(clearUIState());
-      }, 3000);
+      }, 600);
       return () => clearTimeout(timeout);
     }
   }, [error, dispatch]);
@@ -105,9 +105,14 @@ export default function SignUp() {
               onChange={handleChange}
               required
             />
-            <label htmlFor="terms of service">
+            <label htmlFor="acceptedTerms">
               I accept the
-              <Link to="/terms" className="hover:text-dark-blue underline ml-1">
+              <Link
+                to="/terms"
+                className="hover:text-dark-blue underline ml-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 general terms of service & conditions of use
               </Link>
             </label>
@@ -121,11 +126,13 @@ export default function SignUp() {
               onChange={handleChange}
               required
             />
-            <label htmlFor="privacy policy">
+            <label htmlFor="acceptedPrivacy">
               I accept the
               <Link
                 to="/privacy"
                 className="hover:text-dark-blue underline ml-1"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 privacy policy
               </Link>
@@ -161,15 +168,9 @@ export default function SignUp() {
           <div className="flex-1 h-[0.005rem] bg-slate-400" />
         </div>
 
-        {/* Google Sign-in Button */}
-        <button
-          disabled={isDisabled}
-          type="button"
-          className={`bg-green-900 text-white font-bold text-xs tablet:text-sm w-full rounded-lg hover:text-orange-bg p-[0.25rem] uppercase hover:opacity-90 mb-2 transition-opacity ${
-            isDisabled ? "opacity-40 cursor-not-allowed" : "opacity-100"
-          }`}
-        >
-          Continue with Google
+        {/* Google navigation placeholder */}
+        <button className="bg-green-900 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-xs tablet:text-sm p-[0.25rem] mb-2">
+          continue with google
         </button>
 
         <div className="flex gap-2 mt-2 mb-2 justify-center text-xs pb-4">
