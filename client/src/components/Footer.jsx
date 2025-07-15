@@ -14,10 +14,20 @@ export default function Footer() {
 
       {/* Right side: Links */}
       <div className="flex flex-col">
-        <Link to="/terms" className="hover:underline hover:text-orange-txt">
+        <Link
+          to="/terms"
+          className="hover:underline hover:text-orange-txt"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Terms of service
         </Link>
-        <Link to="/privacy" className="hover:underline hover:text-orange-txt">
+        <Link
+          to="/privacy"
+          className="hover:underline hover:text-orange-txt"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Privacy policy
         </Link>
       </div>
