@@ -139,7 +139,8 @@ export const refreshAccessToken = async (req, res, next) => {
 
 // Create and login user using OAuth with google(gmail)
 export const google = async (req, res, next) => {
-  const { name, email, photo } = req.body;
+  const { name, email, photo, consentAccepted } = req.body;
+
   try {
     const user = await User.findOne({ email: email });
 
@@ -176,7 +177,17 @@ export const google = async (req, res, next) => {
         userData
       );
     } else {
-      // If there is no user with this email
+      // NEW USER LOGIC - Check for consent first
+      if (!consentAccepted) {
+        // Return consent required response
+        return res.status(200).json({
+          status: "consent_required",
+          message: "User consent required for registration",
+          tempUserData: { name, email, photo },
+        });
+      }
+
+      // If consent is provided, proceed with user creation
       // 1. Randomly generate a password for user and hash it
       const randomAssignedPassword =
         Math.random().toString(36).slice(-8) +
@@ -230,7 +241,13 @@ export const google = async (req, res, next) => {
         secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
-      return successResponse(res, 201, "User created successfully.", userData);
+
+      return successResponse(
+        res,
+        201,
+        "Account created successfully.",
+        userData
+      );
     }
   } catch (error) {
     console.error("User creation error:", error);
