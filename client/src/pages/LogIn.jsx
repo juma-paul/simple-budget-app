@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logInUser } from "../redux/features/user/userSlice";
-import { clearUIState } from "../redux/features/ui/uiSlice";
+import { logInUser } from "../redux/features/user/userSlice.js";
+import { clearUIState } from "../redux/features/ui/uiSlice.js";
 
 export default function LogIn() {
   const [formData, setFormData] = useState({});
@@ -24,7 +24,7 @@ export default function LogIn() {
       const timeout = setTimeout(() => {
         dispatch(clearUIState());
         navigate("/dashboard");
-      }, 3000);
+      }, 500);
 
       return () => clearTimeout(timeout);
     }
@@ -34,7 +34,7 @@ export default function LogIn() {
     if (error) {
       const timeout = setTimeout(() => {
         dispatch(clearUIState());
-      }, 3000);
+      }, 600);
       return () => clearTimeout(timeout);
     }
   }, [error, dispatch]);
@@ -76,7 +76,7 @@ export default function LogIn() {
 
           {error && (
             <p className="text-white-txt bg-orange-txt text-center py-2 px-4 rounded-lg mt-2">
-              {message || "Somethng went wrong"}
+              {message || "Something went wrong"}
             </p>
           )}
 
@@ -88,7 +88,7 @@ export default function LogIn() {
 
           <button
             type="submit"
-            className="bg-green-900 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-xs tablet:text-sm p-[0.25rem]"
+            className="bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-xs tablet:text-sm p-[0.25rem]"
           >
             {loading ? "Loading..." : "Log In"}
           </button>
@@ -101,7 +101,8 @@ export default function LogIn() {
           <div className="flex-1 h-[0.005rem] bg-slate-400" />
         </div>
 
-        <button className="bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-xs tablet:text-sm p-[0.25rem] mb-2">
+        {/* Google navigation placeholder */}
+        <button className="bg-green-900 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-xs tablet:text-sm p-[0.25rem] mb-2">
           continue with google
         </button>
 
