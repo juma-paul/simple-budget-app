@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { clearUIState } from "../redux/features/ui/uiSlice.js";
 import { signUpUser } from "../redux/features/user/userSlice.js";
+import GoogleOAuth from "../components/GoogleOAuth.jsx";
 
 export default function SignUp() {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ export default function SignUp() {
       const timeout = setTimeout(() => {
         dispatch(clearUIState());
         navigate("/login");
-      }, 500);
+      }, 1000);
 
       return () => clearTimeout(timeout);
     }
@@ -43,7 +44,7 @@ export default function SignUp() {
     if (error) {
       const timeout = setTimeout(() => {
         dispatch(clearUIState());
-      }, 600);
+      }, 3000);
       return () => clearTimeout(timeout);
     }
   }, [error, dispatch]);
@@ -54,11 +55,11 @@ export default function SignUp() {
 
       {/* Container with lines and content */}
       <div className="flex items-center h-0 space-x-4">
-        <div className="flex-1 h-0.5 bg-white-ln z-10"></div>
-        <span className="text-white-txt text-3xl tablet:text-5xl capitalize z-10">
+        <div className="flex-1 h-0.5 bg-white-ln z-5"></div>
+        <span className="text-white-txt text-3xl tablet:text-5xl capitalize z-5">
           Sign Up
         </span>
-        <div className="flex-1 h-0.5 bg-white-ln z-10"></div>
+        <div className="flex-1 h-0.5 bg-white-ln z-5"></div>
       </div>
 
       {/* Orange Box with form inside */}
@@ -153,7 +154,7 @@ export default function SignUp() {
           <button
             disabled={isDisabled}
             type="submit"
-            className={`bg-slate-800 text-white font-bold text-xs tablet:text-sm p-[0.25rem] rounded-lg hover:text-orange-bg uppercase transition-opacity ${
+            className={`bg-slate-800 text-white font-bold text-xs tablet:text-sm p-[0.25rem] rounded-lg hover:text-orange-bg uppercase cursor-pointer transition-opacity ${
               isDisabled ? "opacity-50 cursor-not-allowed" : "opacity-100"
             }`}
           >
@@ -168,10 +169,8 @@ export default function SignUp() {
           <div className="flex-1 h-[0.005rem] bg-slate-400" />
         </div>
 
-        {/* Google navigation placeholder */}
-        <button className="bg-green-900 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-xs tablet:text-sm p-[0.25rem] mb-2">
-          continue with google
-        </button>
+        {/* Google OAuth */}
+        <GoogleOAuth />
 
         <div className="flex gap-2 mt-2 mb-2 justify-center text-xs pb-4">
           <p>Already have an account? </p>

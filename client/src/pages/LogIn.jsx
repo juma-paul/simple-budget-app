@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logInUser } from "../redux/features/user/userSlice.js";
 import { clearUIState } from "../redux/features/ui/uiSlice.js";
+import GoogleOAuth from "../components/GoogleOAuth.jsx";
 
 export default function LogIn() {
   const [formData, setFormData] = useState({});
@@ -24,7 +25,7 @@ export default function LogIn() {
       const timeout = setTimeout(() => {
         dispatch(clearUIState());
         navigate("/dashboard");
-      }, 500);
+      }, 1000);
 
       return () => clearTimeout(timeout);
     }
@@ -34,7 +35,7 @@ export default function LogIn() {
     if (error) {
       const timeout = setTimeout(() => {
         dispatch(clearUIState());
-      }, 600);
+      }, 3000);
       return () => clearTimeout(timeout);
     }
   }, [error, dispatch]);
@@ -45,11 +46,11 @@ export default function LogIn() {
 
       {/* Container with lines and content */}
       <div className="flex items-center h-0 space-x-4">
-        <div className="flex-1 h-0.5 bg-white-ln z-10"></div>
-        <span className="text-white-txt text-3xl tablet:text-5xl capitalize z-10">
+        <div className="flex-1 h-0.5 bg-white-ln z-5"></div>
+        <span className="text-white-txt text-3xl tablet:text-5xl capitalize z-5">
           Welcome Back
         </span>
-        <div className="flex-1 h-0.5 bg-white-ln z-10"></div>
+        <div className="flex-1 h-0.5 bg-white-ln z-5"></div>
       </div>
 
       {/* Orange Box with form inside */}
@@ -88,7 +89,7 @@ export default function LogIn() {
 
           <button
             type="submit"
-            className="bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-xs tablet:text-sm p-[0.25rem]"
+            className="bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase cursor-pointer text-xs tablet:text-sm p-[0.25rem]"
           >
             {loading ? "Loading..." : "Log In"}
           </button>
@@ -101,10 +102,8 @@ export default function LogIn() {
           <div className="flex-1 h-[0.005rem] bg-slate-400" />
         </div>
 
-        {/* Google navigation placeholder */}
-        <button className="bg-green-900 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-xs tablet:text-sm p-[0.25rem] mb-2">
-          continue with google
-        </button>
+        {/* Google OAuth */}
+        <GoogleOAuth />
 
         <p className="text-center text-xs pb-2">
           Not signed up?{" "}
