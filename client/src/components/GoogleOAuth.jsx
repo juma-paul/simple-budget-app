@@ -90,17 +90,25 @@ export default function GoogleOAuth() {
   // Navigation after successful authentication
   useEffect(() => {
     if (success) {
-      dispatch(clearUIState());
-      navigate("/dashboard");
+      const timeout = setTimeout(() => {
+        dispatch(clearUIState());
+        navigate("/dashboard");
+      }, 1000);
+
+      return () => clearTimeout(timeout);
     }
   }, [success, dispatch, navigate]);
 
-  // Clear errors after delay
+  // Show error and clear after delay
   useEffect(() => {
     if (error) {
-      dispatch(clearUIState());
+      const timeout = setTimeout(() => {
+        dispatch(clearUIState());
+      }, 3000);
+
+      return () => clearTimeout(timeout);
     }
-  }, [error, , dispatch]);
+  }, [error, dispatch]);
 
   return (
     <>
@@ -120,7 +128,7 @@ export default function GoogleOAuth() {
       {/* Consent Modal */}
       {showConsentModal &&
         createPortal(
-          <div className="fixed inset-0 bg-white-bg bg-opacity-80 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-gradient-to-b from-white-txt/20 to-white-txt/50 backdrop-blur-[0.2rem] flex items-center justify-center p-4 z-50 transition-all duration-300">
             <div className="bg-dark-blue rounded-xl shadow-2xl max-w-md w-full p-6">
               {/* Title */}
               <div className="text-center mb-4">
@@ -146,7 +154,7 @@ export default function GoogleOAuth() {
                     className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
 
-                  <span className="text-sm text-white-txt">
+                  <span className="text-xs text-white-txt">
                     I accept the{" "}
                     <Link
                       to="/terms"
@@ -171,10 +179,10 @@ export default function GoogleOAuth() {
                     className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
 
-                  <span className="text-sm text-white-txt">
+                  <span className="text-xs text-white-txt">
                     I accept the{" "}
                     <Link
-                      to="/terms"
+                      to="/privacy"
                       className="text-gray-500 hover:text-orange-txt underline"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -184,12 +192,11 @@ export default function GoogleOAuth() {
                   </span>
                 </label>
 
-                {/* Buttons */}
-                <div className="flex gap-3">
+                <div className="flex flex-col tablet:flex-row gap-3">
                   {/* Cancel */}
                   <button
                     onClick={handleConsentCancel}
-                    className="flex-1 px-4 py-2 bg-slate-600 text-white-txt hover:bg-slate-500 rounded-lg transition-colors"
+                    className="w-full sm:w-auto px-4 py-2 bg-slate-600 text-white hover:bg-slate-500 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
@@ -198,13 +205,13 @@ export default function GoogleOAuth() {
                   <button
                     onClick={handleConsentSubmit}
                     disabled={!isConsentValid || loading}
-                    className={`flex-1 px-4 py-2 bg-green-700 text-white-txt rounded-lg transition-colors ${
+                    className={`w-full sm:w-auto px-4 py-2 rounded-lg text-white transition-colors ${
                       !isConsentValid || loading
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-success"
+                        ? "bg-green-700 opacity-50 cursor-not-allowed"
+                        : "bg-green-700 hover:bg-success"
                     }`}
                   >
-                    {loading ? "Loading" : "Submit & Continue"}
+                    {loading ? "Loading..." : "Submit & Continue"}
                   </button>
                 </div>
               </div>
