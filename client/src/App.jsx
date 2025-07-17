@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Layout from "./components/Layout";
+import PrivateRoute from "./components/PrivateRoute";
 
 import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
@@ -36,14 +37,16 @@ function App() {
                 </Layout>
               }
             />
-            <Route
-              path="/dashboard"
-              element={
-                <Layout>
-                  <Dashboard />
-                </Layout>
-              }
-            />
+            <Route element={<PrivateRoute />}>
+              <Route
+                path="/dashboard"
+                element={
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
+                }
+              />
+            </Route>
             <Route
               path="/login"
               element={
