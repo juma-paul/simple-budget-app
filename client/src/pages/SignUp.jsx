@@ -19,25 +19,28 @@ export default function SignUp() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(signUpUser(formData));
+    const resultAction = await dispatch(signUpUser(formData));
+
+    // Access the `payload` directly and check success
+    if (signUpUser.fulfilled.match(resultAction)) {
+      const { success } = resultAction.payload;
+      if (success) {
+        navigateAfterSignup();
+      }
+    }
   };
 
   const isDisabled =
     !formData.acceptedTerms || !formData.acceptedPrivacy || loading;
 
-  // Show message, then navigate after message clears
-  useEffect(() => {
-    if (success) {
-      const timeout = setTimeout(() => {
-        dispatch(clearUIState());
-        navigate("/login");
-      }, 1000);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [success, dispatch, navigate]);
+  const navigateAfterSignup = () => {
+    setTimeout(() => {
+      dispatch(clearUIState());
+      navigate("/login");
+    }, 1000);
+  };
 
   // Show error and clear after delay
   useEffect(() => {
@@ -63,11 +66,11 @@ export default function SignUp() {
       </div>
 
       {/* Orange Box with form inside */}
-      <div className="bg-orange-bg w-[90vw] max-w-md rounded-xl shadow-lg -mt-25 pt-16 pb-0 px-6 absolute left-1/2 transform -translate-x-1/2">
+      <div className="bg-orange-bg w-[70vw] max-w-md rounded-xl shadow-lg -mt-20 pt-16 pb-0 px-6 absolute left-1/2 transform -translate-x-1/2">
         {/* Form content */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-3 w-full mt-20"
+          className="flex flex-col gap-3 w-full mt-12"
         >
           <input
             type="text"
@@ -141,12 +144,12 @@ export default function SignUp() {
           </div>
 
           {error && (
-            <p className="text-white  bg-orange-txt px-2 py-2 rounded-lg mt-2 text-center">
+            <p className="text-white  bg-orange-txt px-2 py-2 rounded-lg mt-1 text-center">
               {message || "Something went wrong"}
             </p>
           )}
           {success && (
-            <p className="text-white bg-orange-txt px-4 py-2 rounded-lg mt-2 text-center">
+            <p className="text-white bg-orange-txt px-4 py-2 rounded-lg mt-1 text-center">
               {message || "Success!"}
             </p>
           )}
@@ -172,7 +175,7 @@ export default function SignUp() {
         {/* Google OAuth */}
         <GoogleOAuth />
 
-        <div className="flex gap-2 mt-2 mb-2 justify-center text-xs pb-4">
+        <div className="flex gap-2 mt-1 mb-1 justify-center text-xs pb-4">
           <p>Already have an account? </p>
           <Link to="/login">
             <span className="text-dark-blue hover:text-slate-400">Log In</span>
