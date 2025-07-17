@@ -1,8 +1,17 @@
+/* Import the fonts first */
+@import "@fontsource/inter";
+@import "@fontsource/roboto-flex";
+@import "@fontsource/belanosima";
+
 @import "tailwindcss";
 
 @theme {
-  --font-primary: "Roboto Flex", "Inter", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  /* Individual font families */
+  --font-inter: "Inter";
+  --font-roboto-flex: "Roboto Flex";
+  --font-belanosima: "Belanosima";
+
+  /* Your other colors... */
   --color-dark-blue: #04254b;
   --color-error: #dc2626;
   --color-success: #059669;
@@ -20,4 +29,8 @@
   --breakpoint-tablet: 40rem;
   --breakpoint-laptop: 64rem;
   --breakpoint-desktop: 80rem;
+}
+
+body {
+  font-family: "Inter", -apple-system, "Segoe UI", sans-serif;
 }

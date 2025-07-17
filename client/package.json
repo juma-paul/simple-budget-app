@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/belanosima": "^5.2.6",
+    "@fontsource/inter": "^5.2.6",
+    "@fontsource/roboto-flex": "^5.2.6",
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/vite": "^4.1.11",
     "firebase": "^11.10.0",
