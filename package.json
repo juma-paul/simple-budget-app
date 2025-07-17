@@ -6,12 +6,12 @@
     "_commentProduction": "=== PRODUCTION ===",
     "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
     "start": "npm run start --prefix server",
-    "build:vaults": "npx @dotenvx/dotenvx build --prefix client && npx @dotenvx/dotenvx build --prefix server",
+    "build:vault": "npx @dotenvx/dotenvx build --prefix server",
     "_commentDevelopment": "=== DEVELOPMENT ===",
     "dev": "npm run dev --prefix server",
     "client": "npm run dev --prefix client",
     "_commentDeployment": "=== DEPLOYMENT ===",
-    "deploy": "npm run build:vaults && npm run build"
+    "deploy": "npm run build:vault && npm run build"
   },
   "workspaces": [
     "client",
