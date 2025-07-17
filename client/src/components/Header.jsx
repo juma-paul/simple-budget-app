@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import logo from "../assets/SBA_Logo.png";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,11 +13,7 @@ export default function Header() {
     <div className="bg-dark-blue h-12 tablet:h-14 laptop:h-16 fixed top-0 left-0 right-0 z-50">
       <div className="flex items-center justify-between h-full px-4 tablet:px-6 laptop:px-8 max-w-6xl mx-auto z-51">
         <Link to="/">
-          <img
-            src="/src/assets/SBA_Logo.png"
-            alt="Logo"
-            className="h-6 tablet:h-8 laptop:h-10"
-          />
+          <img src={logo} alt="Logo" className="h-6 tablet:h-8 laptop:h-10" />
         </Link>
 
         {/* Desktop Navigation */}
