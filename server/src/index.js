@@ -29,14 +29,18 @@ app.use("/api/user", userRoutes);
 
 // Static files from client build (production)
 if (process.env.NODE_ENV === "production") {
+  // Serve static assets
   app.use(express.static(path.join(__dirname, "../client/dist")));
-  app.get("*", (req, res) => {
+
+  // SPA fallback for all non-API routes
+  app.use((req, res, next) => {
     if (req.path.startsWith("/api")) {
       return res.status(404).json({
         error:
           "404 — This page doesn't exist or you don't have permission to view it.",
       });
     }
+
     res.sendFile(path.join(__dirname, "../client/dist/index.html"));
   });
 }
@@ -58,13 +62,13 @@ const port = process.env.PORT || 6798;
 const startServer = async () => {
   try {
     await mongoose.connect(process.env.DATABASE_URL);
-    console.log("✅ Connected to MongoDB");
+    console.log("Connected to MongoDB");
 
     app.listen(port, () => {
       console.log(`Server running at http://localhost:${port}`);
     });
   } catch (error) {
-    console.error("❌ Failed to connect to MongoDB:", error);
+    console.error("Failed to connect to MongoDB:", error);
     process.exit(1);
   }
 };
