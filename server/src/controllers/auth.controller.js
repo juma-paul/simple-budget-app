@@ -210,8 +210,16 @@ export const google = async (req, res, next) => {
         email: email,
         password: hashedPassword,
         profilePicture: photo,
+        acceptedTerms: true,
+        acceptedPrivacy: true,
       });
       await newUser.save();
+
+      // Update last login Date
+      await User.updateOne(
+        { _id: newUser.id },
+        { $set: { lastLoggedIn: new Date() } }
+      );
 
       const accessToken = jwt.sign(
         { id: newUser._id },
