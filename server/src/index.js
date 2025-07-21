@@ -17,9 +17,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-process.env.NODE_ENV === "production"
-  ? app.use(morgan("combined"))
-  : app.use(morgan("dev"));
+app.use(morgan("dev"));
 app.use(cookieParser());
 
 // API routes
