@@ -178,6 +178,7 @@ const userSlice = createSlice({
 
       .addCase(logOutUser.fulfilled, (state, action) => {
         state.currentUser = null;
+        state.signupSuccess = false;
       })
 
       .addCase(googleAuthUser.fulfilled, (state, action) => {
