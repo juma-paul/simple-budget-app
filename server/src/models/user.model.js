@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
 
-const DEFAULT_AVATAR_IMAGE =
-  "https://firebasestorage.googleapis.com/v0/b/the-simple-budget-app.firebasestorage.app/o/default-avatar.png?alt=media&token=91cb9d8f-ac32-409d-b53a-83212881bdf0";
-
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -33,7 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default: DEFAULT_AVATAR_IMAGE,
+      default: null,
     },
     acceptedTerms: {
       type: Boolean,
