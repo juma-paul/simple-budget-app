@@ -27,6 +27,7 @@ export default function GoogleOAuth() {
     try {
       // Firebase authentication
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
 
