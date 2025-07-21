@@ -66,7 +66,7 @@ export default function SignUp() {
       </div>
 
       {/* Orange Box with form inside */}
-      <div className="bg-orange-bg w-[70vw] max-w-md rounded-xl shadow-lg -mt-20 pt-16 pb-0 px-6 absolute left-1/2 transform -translate-x-1/2">
+      <div className="bg-orange-bg w-[90vw] max-w-md rounded-xl shadow-lg -mt-20 pt-16 pb-0 px-6 absolute left-1/2 transform -translate-x-1/2">
         {/* Form content */}
         <form
           onSubmit={handleSubmit}
@@ -175,7 +175,7 @@ export default function SignUp() {
         {/* Google OAuth */}
         <GoogleOAuth />
 
-        <div className="flex gap-2 mt-1 mb-1 justify-center text-xs pb-4">
+        <div className="flex gap-2 mt-1 justify-center text-xs pb-2">
           <p>Already have an account? </p>
           <Link to="/login">
             <span className="text-dark-blue hover:text-slate-400">Log In</span>
