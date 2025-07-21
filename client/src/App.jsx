@@ -87,7 +87,7 @@ function AppComponent() {
               }
             />
             <Route
-              path="/dashboard/profile"
+              path="/profile"
               element={
                 <Layout>
                   <Profile />
