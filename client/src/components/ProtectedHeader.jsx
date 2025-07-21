@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { logOutUser } from "../redux/features/user/userSlice.js";
 import { clearUIState } from "../redux/features/ui/uiSlice.js";
 import logo from "../assets/SBA_Logo.png";
+import DEFAULT_AVATAR_IMAGE from '../assets/default-avatar.png'
 import { useState } from "react";
 
 export default function ProtectedHeader() {
@@ -53,20 +54,11 @@ export default function ProtectedHeader() {
 
           {/* Profile Picture & Settings(Logout, Profile) */}
           <div className="flex items-center gap-4 relative">
-            <Link
-              to="/profile"
-              className="text-white-txt hover:text-orange-txt transition-colors"
-              aria-label="Profile"
-            >
-              {/* User SVG */}
-              <svg
-                className="fill-white-txt w-4 tablet:w-5 laptop:w-6 h-4 tablet:h-5 laptop:h-6 hover:fill-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 448 512"
-              >
-                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" />
-              </svg>
-            </Link>
+            <img
+              src={currentUser.data?.photoUrl || DEFAULT_AVATAR_IMAGE}
+              alt="Profile"
+              className="w-5 h-5 tablet:w-6 tablet:h-6 laptop:w-7 laptop:h-7 rounded-full object-cover"
+            />
 
             {/* Gear/Settings Iconwith Dropdown */}
             <button
