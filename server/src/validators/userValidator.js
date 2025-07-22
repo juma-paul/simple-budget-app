@@ -10,8 +10,8 @@ export const updateUserValidation = [
   body("username")
     .optional()
     .trim()
-    .isLength({ min: 4, max: 12 })
-    .withMessage("Username must be between 4-12 characters.")
+    .isLength({ min: 2, max: 12 })
+    .withMessage("Username must be between 2-12 characters.")
     .matches(/^[a-zA-Z0-9_-]+$/)
     .withMessage(
       "Username may include letters, numbers, underscores, or dashes."
