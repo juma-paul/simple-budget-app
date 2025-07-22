@@ -22,7 +22,7 @@ export default function Profile() {
       {/* Profile pic and input fields */}
       <div className="mx-4 tablet:mx-12 desktop:mx-20 mt-6 tablet:mt-8 desktop:mt-10">
         <form>
-          <div className="flex flex-col tablet:flex-row gap-6 tablet:gap-8 desktop:gap-12">
+          <div className="grid grid-cols-1 tablet:grid-cols-[auto_1fr] gap-6 tablet:gap-8 desktop:gap-12">
             <div className="w-32 tablet:w-44 desktop:w-52 mx-auto tablet:mx-0">
               {/* Image with upload overlay */}
               <div className="relative">
@@ -56,7 +56,7 @@ export default function Profile() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    // onChange={handleImageUpload}
+                    // onChange={handleFileUpload}
                   />
                 </div>
               </div>
@@ -190,46 +190,48 @@ export default function Profile() {
                 />
               </label>
             </div>
-          </div>
-          <div
-            className="
+            <div className="tablet:col-start-2 tablet:col-end-3">
+              <div
+                className="
                       flex flex-col tablet:flex-row items-center justify-center 
                       gap-4 tablet:gap-10 desktop:gap-20 
                       mt-7 mb-7 px-4 tablet:px-8 desktop:px-20
                     "
-          >
-            <button
-              type="submit"
-              className="
+              >
+                <button
+                  type="submit"
+                  className="
                       border-2 cursor-pointer text-light-blue px-5 py-2 rounded-full
                       hover:bg-gray-500 hover:text-white-txt transition-colors
                       w-full tablet:w-auto text-center
                     "
-            >
-              Update
-            </button>
+                >
+                  Update
+                </button>
 
-            <span
-              onClick={null}
-              className="
+                <span
+                  onClick={null}
+                  className="
                     text-green-700 cursor-pointer px-5 py-2 border-2 rounded-full 
                     hover:bg-gray-500 hover:text-white-txt
                     w-full tablet:w-auto text-center
                   "
-            >
-              Restore Account
-            </span>
+                >
+                  Restore Account
+                </span>
 
-            <span
-              onClick={null}
-              className="
+                <span
+                  onClick={null}
+                  className="
                     text-error cursor-pointer px-5 py-2 border-2 rounded-full 
                     hover:bg-gray-500 hover:text-white-txt
                     w-full tablet:w-auto text-center
                   "
-            >
-              Delete Account
-            </span>
+                >
+                  Delete Account
+                </span>
+              </div>
+            </div>
           </div>
         </form>
       </div>
