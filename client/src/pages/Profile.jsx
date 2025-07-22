@@ -2,15 +2,26 @@ import { Link } from "react-router-dom";
 import avatar from "../assets/default-avatar.png";
 import { useSelector, useDispatch } from "react-redux";
 import imageCompression from "browser-image-compression";
-import { setError, setMessage } from "../redux/features/ui/uiSlice";
-import { useState } from "react";
+import { setError, setMessage } from "../redux/features/ui/uiSlice.js";
+import { useEffect, useState } from "react";
+import { updateUser } from "../redux/features/user/userSlice.js";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 
 export default function Profile() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
+  const { loading, error, success } = useSelector((state) => state.ui);
 
   const [image, setImage] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [imagePercent, setImagePercent] = useState(0);
 
+  // Handle file Selection
   const handleFileSelect = async (file) => {
     if (!file.type.startsWith("image/")) {
       dispatch(setError(true));
@@ -37,6 +48,47 @@ export default function Profile() {
       dispatch(setMessage("EFailed to compress image!"));
     }
   };
+
+  // Handle file upload
+  const handleFileUpload = async (imageFile) => {
+    const storage = getStorage();
+
+    const storageRef = ref(storage, `avatars/${currentUser.data._id}.jpg`);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImagePercent(Math.round(progress));
+      },
+
+      (error) => {
+        console.error("Upload failed", error);
+        dispatch(setError(true));
+        dispatch(setMessage("Failed to upload image"));
+      },
+
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          const cacheBustedUrl = `${url}?t=${Date.now()}`;
+          setFormData((prev) => ({
+            ...prev,
+            profilePicture: cacheBustedUrl,
+          }));
+        });
+      }
+    );
+  };
+
+  // Upload image to firebase when state changes
+  useEffect(() => {
+    if (image) {
+      handleFileUpload(image);
+    }
+  }, [image]);
+
   return (
     <>
       <hr className="mt-1 h-[0.125rem] bg-white-ln mx-4 tablet:mx-12 desktop:mx-20 border-0" />
@@ -56,59 +108,74 @@ export default function Profile() {
         <form>
           <div className="grid grid-cols-1 tablet:grid-cols-[auto_1fr] gap-6 tablet:gap-8 desktop:gap-12">
             <div className="w-32 tablet:w-44 desktop:w-52 mx-auto tablet:mx-0">
-              {/* Image with upload overlay */}
-              <div className="relative">
-                <img
-                  src={
-                    currentUser?.data?.photoUrl
-                      ? currentUser.data.photoUrl
-                      : avatar
-                  }
-                  alt="Profile"
-                  className="w-full h-32 tablet:h-44 desktop:h-52 rounded-full object-cover border-2 border-gray-400"
-                  onError={(e) => (e.target.src = avatar)}
-                />
-
-                {/* Upload button overlay */}
-                <div className="absolute bottom-0 right-0">
-                  <label
-                    htmlFor="profile-upload"
-                    className="text-white rounded-full p-2 cursor-pointer shadow-lg transition-colors"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 448 512"
-                      className="w-7 h-7 p-1 fill-white-txt bg-orange-txt rounded-full"
-                    >
-                      <path d="M246.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 109.3 192 320c0 17.7 14.3 32 32 32s32-14.3 32-32l0-210.7 73.4 73.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-128-128zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-64z" />
-                    </svg>
-                  </label>
-                  <input
-                    id="profile-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleFileSelect(e.target.files[0])}
+              {/* Hidden file input */}
+              <input
+                id="profile-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleFileSelect(e.target.files[0])}
+              />
+              <div className="relative w-32 h-32 tablet:w-40 tablet:h-40 desktop:w-52 desktop:h-52">
+                {/* Image with upload overlay */}
+                <div className="rounded-full overflow-hidden border-2 border-gray-400 w-full h-full">
+                  <img
+                    src={
+                      formData.profilePicture
+                        ? typeof formData.profilePicture === "string"
+                          ? formData.profilePicture
+                          : URL.createObjectURL(formData.profilePicture)
+                        : currentUser.data.photoUrl || avatar
+                    }
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onClick={() =>
+                      document.getElementById("profile-upload").click()
+                    }
+                    onError={(e) => (e.target.src = avatar)}
                   />
-                </div>
-              </div>
 
-              {/* Member since text */}
-              <p className="text-center text-gray-600 text-sm md:text-base mt-2">
-                Member since{" "}
-                <span className="font-extrabold text-black">
-                  {currentUser?.data?.createdAt
-                    ? new Date(currentUser.data.createdAt).toLocaleDateString(
-                        "en-US",
-                        {
-                          month: "2-digit",
-                          day: "2-digit",
-                          year: "2-digit",
-                        }
-                      )
-                    : "MM/DD/YY"}
-                </span>
-              </p>
+                  {/* Upload button overlay */}
+                  <div className="absolute bottom-0 right-0">
+                    <label
+                      htmlFor="profile-upload"
+                      className="text-white rounded-full p-2 cursor-pointer shadow-lg transition-colors"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 448 512"
+                        className="w-7 h-7 p-1 fill-white-txt bg-orange-txt rounded-full"
+                      >
+                        <path d="M246.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 109.3 192 320c0 17.7 14.3 32 32 32s32-14.3 32-32l0-210.7 73.4 73.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-128-128zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-64z" />
+                      </svg>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Upload progress */}
+                {imagePercent > 0 && imagePercent < 100 && (
+                  <span className="text-slate-700 text-sm text-center block mt-2">
+                    Uploading: {imagePercent}%
+                  </span>
+                )}
+
+                {/* Member since text */}
+                <p className="text-center text-gray-600 text-sm md:text-base mt-2">
+                  Member since{" "}
+                  <span className="font-extrabold text-orange-txt">
+                    {currentUser?.data?.createdAt
+                      ? new Date(currentUser.data.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "2-digit",
+                            day: "2-digit",
+                            year: "2-digit",
+                          }
+                        )
+                      : "MM/DD/YY"}
+                  </span>
+                </p>
+              </div>
             </div>
 
             <div className="bg-light-blue rounded-4xl flex-1 text-white-txt">
