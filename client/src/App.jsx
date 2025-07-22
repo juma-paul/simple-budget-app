@@ -12,6 +12,7 @@ import LogIn from "./pages/LogIn";
 import Reviews from "./pages/Reviews";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
+import { useSelector } from "react-redux";
 
 function App() {
   return (
@@ -22,9 +23,9 @@ function App() {
 }
 
 function AppComponent() {
-  const location = useLocation();
+  const currentUser = useSelector((state) => state.user.currentUser);
 
-  const isProtected = location.pathname.startsWith("/dashboard");
+  const isProtected = !!currentUser;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -87,7 +88,7 @@ function AppComponent() {
               }
             />
             <Route
-              path="/profile"
+              path="/dashboard/profile"
               element={
                 <Layout>
                   <Profile />
