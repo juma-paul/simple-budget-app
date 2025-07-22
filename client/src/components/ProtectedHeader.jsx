@@ -1,41 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { logOutUser } from "../redux/features/user/userSlice.js";
 import { clearUIState } from "../redux/features/ui/uiSlice.js";
 import logo from "../assets/SBA_Logo.png";
-import DEFAULT_AVATAR_IMAGE from '../assets/default-avatar.png'
+import DEFAULT_AVATAR_IMAGE from "../assets/default-avatar.png";
 import { useState } from "react";
 
 export default function ProtectedHeader() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const currentUser = useSelector((state) => state.user.currentUser);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const onLogout = async () => {
-    const resultAction = await dispatch(logOutUser());
-
-    if (logOutUser.fulfilled.match(resultAction)) {
-      const { success } = resultAction.payload;
-      if (success && currentUser === null) {
-        const timeout = setTimeout(() => {
-          dispatch(clearUIState());
-          navigate("/login");
-        }, 300);
-
-        return () => clearTimeout(timeout);
-      }
-    } else if (logOutUser.rejected.match(resultAction)) {
-      const { error } = resultAction.payload;
-      if (error) {
-        console.error("Logout Error:", error);
-        const timeout = setTimeout(() => {
-          dispatch(clearUIState());
-        }, 3000);
-
-        return () => clearTimeout(timeout);
-      }
-    }
+    await dispatch(logOutUser());
+    dispatch(clearUIState());
   };
 
   const toggleDropdown = () => {
@@ -55,9 +33,14 @@ export default function ProtectedHeader() {
           {/* Profile Picture & Settings(Logout, Profile) */}
           <div className="flex items-center gap-4 relative">
             <img
-              src={currentUser.data?.photoUrl || DEFAULT_AVATAR_IMAGE}
+              src={
+                currentUser.data?.photoUrl
+                  ? currentUser.data.photoUrl
+                  : DEFAULT_AVATAR_IMAGE
+              }
               alt="Profile"
-              className="w-5 h-5 tablet:w-6 tablet:h-6 laptop:w-7 laptop:h-7 rounded-full object-cover"
+              className="w-5 h-5 tablet:w-6 tablet:h-6 laptop:w-7 laptop:h-7 rounded-full object-cover border-2 border-white-txt"
+              onError={(e) => (e.target.src = DEFAULT_AVATAR_IMAGE)}
             />
 
             {/* Gear/Settings Iconwith Dropdown */}
@@ -80,7 +63,7 @@ export default function ProtectedHeader() {
               <div className="absolute right-0 top-8 tablet:top-10 laptop:top-12 w-30 bg-white-txt rounded-md shadow-xl z-50">
                 <div className="py-1">
                   <Link
-                    to="/profile"
+                    to="/dashboard/profile"
                     className="block px-4 py-2 w-full text-sm text-gray-700 hover:bg-white-bg hover:text-orange-txt transition-colors"
                     onClick={() => setIsDropdownOpen(false)}
                   >
