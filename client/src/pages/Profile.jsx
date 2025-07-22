@@ -1,10 +1,42 @@
 import { Link } from "react-router-dom";
 import avatar from "../assets/default-avatar.png";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import imageCompression from "browser-image-compression";
+import { setError, setMessage } from "../redux/features/ui/uiSlice";
+import { useState } from "react";
 
 export default function Profile() {
+  const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
 
+  const [image, setImage] = useState(null);
+
+  const handleFileSelect = async (file) => {
+    if (!file.type.startsWith("image/")) {
+      dispatch(setError(true));
+      dispatch(setMessage("Please select a valid image file"));
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      dispatch(setError(true));
+      dispatch(setMessage("Image size must be less than 5MBs"));
+      return;
+    }
+
+    try {
+      const compressed = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 800,
+        useWebWorker: true,
+      });
+      setImage(compressed);
+      console.log("Success: image compressed successfully!");
+    } catch (error) {
+      console.error("Compression failed", error);
+      dispatch(setMessage("EFailed to compress image!"));
+    }
+  };
   return (
     <>
       <hr className="mt-1 h-[0.125rem] bg-white-ln mx-4 tablet:mx-12 desktop:mx-20 border-0" />
@@ -56,7 +88,7 @@ export default function Profile() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    // onChange={handleFileUpload}
+                    onChange={(e) => handleFileSelect(e.target.files[0])}
                   />
                 </div>
               </div>
