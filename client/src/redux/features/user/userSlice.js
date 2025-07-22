@@ -154,6 +154,45 @@ export const googleAuthUser = createAsyncThunk(
   }
 );
 
+// Update User
+export const updateUser = createAsyncThunk(
+  "user/updateUser",
+  async (formData, thunkAPI) => {
+    const dispatch = thunkAPI.dispatch;
+    const state = thunkAPI.getState();
+    const userId = state.user.currentUser.data._id;
+
+    dispatch(clearUIState());
+    dispatch(setLoading(true));
+
+    try {
+      const res = await fetch(`/api/user/update/${userId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong!");
+      }
+
+      dispatch(setSuccess(true));
+      dispatch(setMessage(data.message || "Profile updated successfully"));
+
+      return data.data;
+    } catch (error) {
+      dispatch(setError(true));
+      dispatch(setMessage(error.message || "Something went wrong!"));
+      return thunkAPI.rejectWithValue(error.value);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
 // Create user slice
 const userSlice = createSlice({
   name: "user",
@@ -185,6 +224,10 @@ const userSlice = createSlice({
         if (action.payload.type === "success") {
           state.currentUser = action.payload.userData;
         }
+      })
+
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.currentUser = action.payload;
       });
   },
 });
