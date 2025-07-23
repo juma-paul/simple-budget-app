@@ -34,8 +34,8 @@ export default function ProtectedHeader() {
           <div className="flex items-center gap-4 relative">
             <img
               src={
-                currentUser.data?.photoUrl
-                  ? currentUser.data.photoUrl
+                currentUser.data?.profilePicture
+                  ? currentUser.data.profilePicture
                   : DEFAULT_AVATAR_IMAGE
               }
               alt="Profile"
