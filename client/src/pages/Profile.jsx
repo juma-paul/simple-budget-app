@@ -2,7 +2,11 @@ import { Link } from "react-router-dom";
 import avatar from "../assets/default-avatar.png";
 import { useSelector, useDispatch } from "react-redux";
 import imageCompression from "browser-image-compression";
-import { setError, setMessage } from "../redux/features/ui/uiSlice.js";
+import {
+  clearUIState,
+  setError,
+  setMessage,
+} from "../redux/features/ui/uiSlice.js";
 import { useEffect, useState } from "react";
 import { updateUser } from "../redux/features/user/userSlice.js";
 import {
@@ -15,7 +19,7 @@ import {
 export default function Profile() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
-  const { loading, error, success } = useSelector((state) => state.ui);
+  const { loading, error, success, message } = useSelector((state) => state.ui);
 
   const [image, setImage] = useState(null);
   const [formData, setFormData] = useState({});
@@ -89,6 +93,82 @@ export default function Profile() {
     }
   }, [image]);
 
+  // Handle change in form data
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (image && !formData.profilePicture) {
+      dispatch(setError(true));
+      dispatch(setMessage("Please wait until image upload completes."));
+      return;
+    }
+
+    // Filter out empty fields and only send fields that have actual values
+    const filteredFormData = {};
+
+    // Only include non-empty fields
+    Object.keys(formData).forEach((key) => {
+      const value = formData[key];
+
+      // Skip empty strings, null, undefined
+      if (value !== "" && value !== null && value !== undefined) {
+        // For password fields, only include if all password fields are provided
+        if (
+          key === "currentPassword" ||
+          key === "newPassword" ||
+          key === "confirmPassword"
+        ) {
+          // Only include password fields if user is actually trying to change password
+          if (
+            formData.currentPassword &&
+            formData.newPassword &&
+            formData.confirmPassword
+          ) {
+            filteredFormData[key] = value;
+          }
+        } else {
+          filteredFormData[key] = value;
+        }
+      }
+    });
+
+    console.log("Sending filtered data:", filteredFormData);
+    dispatch(updateUser(filteredFormData));
+  };
+
+  useEffect(() => {
+    if (error || success) {
+      const timeout = setTimeout(() => {
+        dispatch(clearUIState());
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error, success]);
+
+  useEffect(() => {
+    if (currentUser.data) {
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+        firstName: currentUser.data.firstName || "",
+        lastName: currentUser.data.lastName || "",
+        username: currentUser.data.username || "",
+        profilePicture: currentUser.data.profilePicture || "",
+      });
+    }
+  }, [currentUser]);
+
+  console.log(formData);
+
   return (
     <>
       <hr className="mt-1 h-[0.125rem] bg-white-ln mx-4 tablet:mx-12 desktop:mx-20 border-0" />
@@ -105,7 +185,7 @@ export default function Profile() {
 
       {/* Profile pic and input fields */}
       <div className="mx-4 tablet:mx-12 desktop:mx-20 mt-6 tablet:mt-8 desktop:mt-10">
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 tablet:grid-cols-[auto_1fr] gap-6 tablet:gap-8 desktop:gap-12">
             <div className="w-32 tablet:w-44 desktop:w-52 mx-auto tablet:mx-0">
               {/* Hidden file input */}
@@ -125,7 +205,7 @@ export default function Profile() {
                         ? typeof formData.profilePicture === "string"
                           ? formData.profilePicture
                           : URL.createObjectURL(formData.profilePicture)
-                        : currentUser.data.photoUrl || avatar
+                        : currentUser.data.profilePicture || avatar
                     }
                     alt="Profile"
                     className="w-full h-full object-cover"
@@ -188,14 +268,16 @@ export default function Profile() {
                 htmlFor="firstName"
                 className="flex items-center gap-4 m-4 flex-nowrap"
               >
-                <p className="text-lg tablet:text-xl desktop:text-2xl whitespace-nowrap">
+                <p className="text-sm tablet:text-lg desktop:text-xl whitespace-nowrap">
                   First Name
                 </p>
                 <input
+                  value={formData.firstName || ""}
                   type="text"
                   id="firstName"
                   placeholder="First Name"
                   className="p-2 bg-white-ln rounded-lg text-black italic w-full text-sm tablet:text-base desktop:text-lg"
+                  onChange={handleChange}
                 />
               </label>
 
@@ -203,14 +285,16 @@ export default function Profile() {
                 htmlFor="lastName"
                 className="flex items-center gap-4 m-4 flex-nowrap"
               >
-                <p className="text-lg tablet:text-xl desktop:text-2xl whitespace-nowrap">
+                <p className="text-sm tablet:text-lg desktop:text-xl whitespace-nowrap">
                   Last Name
                 </p>
                 <input
+                  value={formData.lastName || ""}
                   type="text"
                   id="lastName"
                   placeholder="Last Name"
                   className="p-2 bg-white-ln rounded-lg text-black italic w-full text-sm tablet:text-base desktop:text-lg"
+                  onChange={handleChange}
                 />
               </label>
 
@@ -218,14 +302,16 @@ export default function Profile() {
                 htmlFor="username"
                 className="flex items-center gap-4 m-4 flex-nowrap"
               >
-                <p className="text-lg tablet:text-xl desktop:text-2xl whitespace-nowrap">
+                <p className="text-sm tablet:text-lg desktop:text-xl whitespace-nowrap">
                   Username
                 </p>
                 <input
+                  value={formData.username || ""}
                   type="text"
                   id="username"
                   placeholder="Username"
                   className="p-2 bg-white-ln rounded-lg text-black italic w-full text-sm tablet:text-base desktop:text-lg"
+                  onChange={handleChange}
                 />
               </label>
 
@@ -233,14 +319,17 @@ export default function Profile() {
                 htmlFor="email"
                 className="flex items-center gap-4 m-4 flex-nowrap"
               >
-                <p className="text-lg tablet:text-xl desktop:text-2xl whitespace-nowrap">
+                <p className="text-sm tablet:text-lg desktop:text-xl whitespace-nowrap">
                   Email Address
                 </p>
                 <input
+                  value={formData.email || currentUser.data?.email || ""}
                   type="email"
                   id="email"
                   placeholder="Email Address"
-                  className="p-2 ml-11 bg-white-ln rounded-lg text-black italic w-full text-sm tablet:text-base desktop:text-lg"
+                  disabled
+                  className="p-2 ml-11 bg-white-ln rounded-lg text-black italic w-full text-sm tablet:text-base desktop:text-lg disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  onChange={handleChange}
                 />
               </label>
 
@@ -248,14 +337,16 @@ export default function Profile() {
                 htmlFor="confirmPassword"
                 className="flex items-center gap-4 m-4 flex-nowrap"
               >
-                <p className="text-lg tablet:text-xl desktop:text-2xl whitespace-nowrap">
+                <p className="text-sm tablet:text-lg desktop:text-xl whitespace-nowrap">
                   Current Password
                 </p>
                 <input
+                  value={formData.currentPassword || ""}
                   type="password"
                   id="currentPassword"
                   placeholder="Current Password"
                   className="p-2 bg-white-ln rounded-lg text-black italic w-full text-sm tablet:text-base desktop:text-lg"
+                  onChange={handleChange}
                 />
               </label>
 
@@ -263,14 +354,16 @@ export default function Profile() {
                 htmlFor="newPassword"
                 className="flex items-center gap-4 m-4 flex-nowrap"
               >
-                <p className="text-lg tablet:text-xl desktop:text-2xl whitespace-nowrap">
+                <p className="text-sm tablet:text-lg desktop:text-xl whitespace-nowrap">
                   New Password
                 </p>
                 <input
+                  value={formData.newPassword || ""}
                   type="password"
                   id="newPassword"
                   placeholder="New Password"
                   className="p-2 ml-9 bg-white-ln rounded-lg text-black italic w-full text-sm tablet:text-base desktop:text-lg"
+                  onChange={handleChange}
                 />
               </label>
 
@@ -278,18 +371,32 @@ export default function Profile() {
                 htmlFor="confirmPassword"
                 className="flex items-center gap-4 m-4 flex-nowrap"
               >
-                <p className="text-lg tablet:text-xl desktop:text-2xl whitespace-nowrap">
+                <p className="text-sm tablet:text-lg desktop:text-xl whitespace-nowrap">
                   Confirm Password
                 </p>
                 <input
+                  value={formData.confirmPassword || ""}
                   type="password"
                   id="confirmPassword"
                   placeholder="Confirm Password"
                   className="p-2 bg-white-ln rounded-lg text-black italic w-full text-sm tablet:text-base desktop:text-lg"
+                  onChange={handleChange}
                 />
               </label>
             </div>
+
             <div className="tablet:col-start-2 tablet:col-end-3">
+              {/* Status Messages */}
+              {error && (
+                <p className="text-red-700 text-center">
+                  {message || "Something went wrong!"}
+                </p>
+              )}
+              {success && (
+                <p className="text-green-700 text-center">
+                  {message || "Profile updated successfully!"}
+                </p>
+              )}
               <div
                 className="
                       flex flex-col tablet:flex-row items-center justify-center 
@@ -299,13 +406,14 @@ export default function Profile() {
               >
                 <button
                   type="submit"
+                  disabled={loading || (image && !formData.profilePicture)}
                   className="
                       border-2 cursor-pointer text-light-blue px-5 py-2 rounded-full
                       hover:bg-gray-500 hover:text-white-txt transition-colors
                       w-full tablet:w-auto text-center
                     "
                 >
-                  Update
+                  {loading ? "Loading..." : "Update"}
                 </button>
 
                 <span
