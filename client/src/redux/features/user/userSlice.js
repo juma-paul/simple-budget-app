@@ -182,7 +182,7 @@ export const updateUser = createAsyncThunk(
       dispatch(setSuccess(true));
       dispatch(setMessage(data.message || "Profile updated successfully"));
 
-      return data.data;
+      return data;
     } catch (error) {
       dispatch(setError(true));
       dispatch(setMessage(error.message || "Something went wrong!"));
