@@ -76,7 +76,7 @@ export const updateUser = async (req, res, next) => {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       { $set: updateFields },
-      { new: true }
+      { new: true, runValidators: false, context: "query" }
     );
 
     const { password: _, ...userData } = updatedUser._doc;
