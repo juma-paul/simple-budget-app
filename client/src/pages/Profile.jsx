@@ -171,7 +171,7 @@ export default function Profile() {
 
   return (
     <>
-      <hr className="mt-1 h-[0.125rem] bg-white-ln mx-4 tablet:mx-12 desktop:mx-20 border-0" />
+      <hr className="mt-5 h-[0.125rem] bg-white-ln mx-4 tablet:mx-12 desktop:mx-20 border-0" />
 
       {/* Navigation button to Dashboard */}
       <div className="flex justify-end mx-4 tablet:mx-12 desktop:mx-20 mt-6 tablet:mt-8 desktop:mt-10">
@@ -401,7 +401,7 @@ export default function Profile() {
                 className="
                       flex flex-col tablet:flex-row items-center justify-center 
                       gap-4 tablet:gap-10 desktop:gap-20 
-                      mt-7 mb-7 px-4 tablet:px-8 desktop:px-20
+                      mb-10 px-4 tablet:px-8 desktop:px-20
                     "
               >
                 <button
