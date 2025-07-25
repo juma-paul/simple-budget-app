@@ -388,12 +388,12 @@ export default function Profile() {
             <div className="tablet:col-start-2 tablet:col-end-3">
               {/* Status Messages */}
               {error && (
-                <p className="text-red-700 text-center">
+                <p className="text-red-700 text-center mb-7">
                   {message || "Something went wrong!"}
                 </p>
               )}
               {success && (
-                <p className="text-green-700 text-center">
+                <p className="text-green-700 text-center mb-7">
                   {message || "Profile updated successfully!"}
                 </p>
               )}
