@@ -10,19 +10,19 @@ export default function Header() {
   };
 
   return (
-    <div className="bg-dark-blue h-12 tablet:h-14 laptop:h-16 fixed top-0 left-0 right-0 z-50">
-      <div className="flex items-center justify-between h-full px-4 tablet:px-6 laptop:px-8 max-w-6xl mx-auto z-51">
+    <div className="bg-dark-blue h-14 tablet:h-16 laptop:h-18 fixed left-0 right-0 z-50">
+      <div className="flex items-center justify-between h-full px-4 tablet:px-6 laptop:px-8 max-w-full mx-auto z-51">
         <Link to="/">
-          <img src={logo} alt="Logo" className="h-6 tablet:h-8 laptop:h-10" />
+          <img src={logo} alt="Logo" className="h-8 tablet:h-10 laptop:h-12" />
         </Link>
 
         {/* Desktop Navigation */}
-        <ul className="hidden tablet:flex items-center text-black text-xs space-x-2 laptop:space-x-3 desktop:space-x-4">
+        <ul className="hidden tablet:flex items-center text-black text-xs space-x-4 laptop:space-x-5 desktop:space-x-6">
           <Link
             to="/about"
             className="hover:opacity-80 transition-opacity hover:text-orange-txt"
           >
-            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium whitespace-nowrap">
+            <li className="bg-white-bg px-2 py-1 laptop:px-3 laptop:py-2 desktop:px-4 desktop:py-2 rounded-full font-bold tablet:text-base whitespace-nowrap">
               About Us
             </li>
           </Link>
@@ -30,7 +30,7 @@ export default function Header() {
             to="/reviews"
             className="hover:opacity-80 transition-opacity hover:text-orange-txt"
           >
-            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium">
+            <li className="bg-white-bg px-2 py-1 laptop:px-3 laptop:py-2 desktop:px-4 desktop:py-2 rounded-full font-bold tablet:text-base whitespace-nowrap">
               Reviews
             </li>
           </Link>
@@ -38,7 +38,7 @@ export default function Header() {
             to="/signup"
             className="hover:opacity-80 transition-opacity hover:text-orange-txt"
           >
-            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium whitespace-nowrap">
+            <li className="bg-white-bg px-2 py-1 laptop:px-3 laptop:py-2 desktop:px-4 desktop:py-2 rounded-full font-bold tablet:text-base whitespace-nowrap">
               Sign Up
             </li>
           </Link>
@@ -46,7 +46,7 @@ export default function Header() {
             to="/login"
             className="hover:opacity-80 transition-opacity hover:text-orange-txt"
           >
-            <li className="bg-white-bg px-1.5 py-1 laptop:px-2.5 laptop:py-1.5 desktop:px-3 desktop:py-1.5 rounded-full font-medium whitespace-nowrap">
+            <li className="bg-white-bg px-2 py-1 laptop:px-3 laptop:py-2 desktop:px-4 desktop:py-2 rounded-full font-bold tablet:text-base whitespace-nowrap">
               Log In
             </li>
           </Link>
@@ -55,7 +55,7 @@ export default function Header() {
         {/* Mobile Login + Hamburger */}
         <div className="tablet:hidden flex items-center space-x-3">
           <Link to="/login" className="hover:opacity-80 transition-opacity">
-            <span className="text-black text-xs px-2 py-1 font-bold bg-white-bg rounded-full hover:text-orange-txt whitespace-nowrap">
+            <span className="text-black text-sm px-2 py-1 font-bold bg-white-bg rounded-full hover:text-orange-txt whitespace-nowrap">
               Log In
             </span>
           </Link>
