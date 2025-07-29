@@ -193,7 +193,7 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-// Delete User
+// Delete User's account
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async (formData, thunkAPI) => {
@@ -212,7 +212,7 @@ export const deleteUser = createAsyncThunk(
         credentials: "include",
       });
 
-      const data = res.json();
+      const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "Failed to delete account!");
@@ -225,6 +225,42 @@ export const deleteUser = createAsyncThunk(
       dispatch(setError(true));
       dispatch(setMessage(data.message || "Failed to delete account!"));
       return thunkAPI.rejectWithValue(error.value);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
+// Restore deleted account
+export const restoreUser = createAsyncThunk(
+  "user/restoreUser",
+  async (_, thunkAPI) => {
+    const dispatch = thunkAPI.dispatch;
+    const state = thunkAPI.getState();
+    const userId = state.currentUser.data._id;
+
+    dispatch(clearUIState());
+    dispatch(setLoading(true));
+
+    try {
+      const res = await fetch(`/api/user/restore/${userId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong!");
+      }
+
+      dispatch(setSuccess(true));
+      dispatch(setMessage(data.message || "Account restored successfully"));
+      return;
+    } catch (error) {
+      dispatch(setError(true));
+      dispatch(setMessage(data.message || "Something went wrong!"));
+      return rejectWithValue(error.value);
     } finally {
       dispatch(setLoading(false));
     }
