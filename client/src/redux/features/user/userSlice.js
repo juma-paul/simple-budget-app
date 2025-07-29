@@ -193,6 +193,44 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+// Delete User
+export const deleteUser = createAsyncThunk(
+  "user/deleteUser",
+  async (formData, thunkAPI) => {
+    const dispatch = thunkAPI.dispatch;
+    const state = thunkAPI.getState();
+    const userId = state.user.currentUser.data._id;
+
+    dispatch(clearUIState());
+    dispatch(setLoading(true));
+
+    try {
+      const res = await fetch(`/api/user/delete/${userId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+
+      const data = res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to delete account!");
+      }
+
+      dispatch(setSuccess(true));
+      dispatch(setMessage(data.message || "Account deleted successfully"));
+      return;
+    } catch (error) {
+      dispatch(setError(true));
+      dispatch(setMessage(data.message || "Failed to delete account!"));
+      return thunkAPI.rejectWithValue(error.value);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
 // Create user slice
 const userSlice = createSlice({
   name: "user",
