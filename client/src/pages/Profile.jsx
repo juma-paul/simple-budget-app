@@ -399,9 +399,11 @@ export default function Profile() {
               )}
               <div
                 className="
-                      flex flex-col tablet:flex-row items-center justify-center 
+                      flex flex-col tablet:flex-row 
+                      items-end justify-end 
                       gap-4 tablet:gap-10 desktop:gap-20 
                       mb-10 px-4 tablet:px-8 desktop:px-20
+                      w-full ml-auto
                     "
               >
                 <button
