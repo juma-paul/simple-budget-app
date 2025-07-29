@@ -10,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.post(
+router.put(
   "/update/:id",
   updateUserValidation,
   validate,
