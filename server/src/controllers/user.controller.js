@@ -120,6 +120,17 @@ export const deleteUser = async (req, res, next) => {
     );
     await user.save();
 
+    const isProd = process.env.NODE_ENV === "production";
+    const cookieOptions = {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: isProd,
+      path: "/",
+    };
+    ["accessToken", "refreshToken"].forEach((cookieName) => {
+      res.clearCookie(cookieName, cookieOptions);
+    });
+
     return successResponse(
       res,
       200,
@@ -148,7 +159,17 @@ export const restoreUser = async (req, res, next) => {
     user.deletionScheduledAt = null;
     await user.save();
 
-    return successResponse(res, 200, "Your account has been restored.");
+    // Fetch the fresh updated user document
+    const updatedUser = await User.findById(req.params.id);
+
+    const { password, ...userData } = updatedUser._doc;
+
+    return successResponse(
+      res,
+      200,
+      "Your account has been restored.",
+      userData
+    );
   } catch (error) {
     return next(errorHandler(500, "Failed to restore account."));
   }
