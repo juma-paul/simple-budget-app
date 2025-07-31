@@ -12,7 +12,7 @@ export default function GoogleOAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, error, success, message } = useSelector((state) => state.ui);
+  const { googleLoading, error, success } = useSelector((state) => state.ui);
   const [showConsentModal, setShowConsentModal] = useState(false);
   const [consentData, setConsentData] = useState({
     acceptedTerms: false,
@@ -116,14 +116,14 @@ export default function GoogleOAuth() {
       <button
         type="button"
         onClick={handleGoogleClick}
-        disabled={loading}
+        disabled={googleLoading}
         className={`bg-green-900 text-white font-bold text-xs tablet:text-sm w-full rounded-lg hover:text-orange-bg p-[0.25rem] uppercase hover:opacity-90 mb-2 transition-opacity ${
-          loading
+          googleLoading
             ? "opacity-50 cursor-not-allowed"
             : "opacity-100 cursor-pointer"
         }`}
       >
-        {loading ? "Loading..." : "Continue with Google"}
+        {googleLoading ? "Loading..." : "Continue with Google"}
       </button>
 
       {/* Consent Modal */}
@@ -205,14 +205,14 @@ export default function GoogleOAuth() {
                   {/* Submit & Continue */}
                   <button
                     onClick={handleConsentSubmit}
-                    disabled={!isConsentValid || loading}
+                    disabled={!isConsentValid || googleLoading}
                     className={`w-full sm:w-auto px-4 py-2 rounded-lg text-white transition-colors ${
-                      !isConsentValid || loading
+                      !isConsentValid || googleLoading
                         ? "bg-green-700 opacity-50 cursor-not-allowed"
                         : "bg-green-700 hover:bg-success"
                     }`}
                   >
-                    {loading ? "Loading..." : "Submit & Continue"}
+                    {googleLoading ? "Loading..." : "Submit & Continue"}
                   </button>
                 </div>
               </div>
