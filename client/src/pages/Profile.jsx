@@ -3,39 +3,44 @@ import avatar from "../assets/default-avatar.png";
 import { useSelector, useDispatch } from "react-redux";
 import imageCompression from "browser-image-compression";
 import {
-  clearUIState,
-  setError,
-  setMessage,
+  setUpdateError,
+  setUpdateMessage,
 } from "../redux/features/ui/uiSlice.js";
 import { useEffect, useState } from "react";
-import { updateUser } from "../redux/features/user/userSlice.js";
+import { restoreUser, updateUser } from "../redux/features/user/userSlice.js";
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+// import { createPortal } from "react-dom";
 
 export default function Profile() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
-  const { loading, error, success, message } = useSelector((state) => state.ui);
+  const { updateLoading, updateError, updateSuccess, updateMessage } =
+    useSelector((state) => state.ui);
+  const { restoreLoading, restoreError, restoreSuccess, restoreMessage } =
+    useSelector((state) => state.ui);
+  // const [showDelete, setShowDelete] = useState(false);
 
   const [image, setImage] = useState(null);
   const [formData, setFormData] = useState({});
   const [imagePercent, setImagePercent] = useState(0);
+  const [status, setStatus] = useState({ type: "", message: "" });
 
   // Handle file Selection
   const handleFileSelect = async (file) => {
     if (!file.type.startsWith("image/")) {
-      dispatch(setError(true));
-      dispatch(setMessage("Please select a valid image file"));
+      dispatch(setUpdateError(true));
+      dispatch(setUpdateMessage("Please select a valid image file"));
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      dispatch(setError(true));
-      dispatch(setMessage("Image size must be less than 5MBs"));
+      dispatch(setUpdateError(true));
+      dispatch(setUpdateMessage("Image size must be less than 5MBs"));
       return;
     }
 
@@ -49,7 +54,7 @@ export default function Profile() {
       console.log("Success: image compressed successfully!");
     } catch (error) {
       console.error("Compression failed", error);
-      dispatch(setMessage("EFailed to compress image!"));
+      dispatch(setUpdateMessage("EFailed to compress image!"));
     }
   };
 
@@ -70,8 +75,8 @@ export default function Profile() {
 
       (error) => {
         console.error("Upload failed", error);
-        dispatch(setError(true));
-        dispatch(setMessage("Failed to upload image"));
+        dispatch(setUpdateError(true));
+        dispatch(setUpdateMessage("Failed to upload image"));
       },
 
       () => {
@@ -106,8 +111,8 @@ export default function Profile() {
     e.preventDefault();
 
     if (image && !formData.profilePicture) {
-      dispatch(setError(true));
-      dispatch(setMessage("Please wait until image upload completes."));
+      dispatch(setUpdateError(true));
+      dispatch(setUpdateMessage("Please wait until image upload completes."));
       return;
     }
 
@@ -140,18 +145,8 @@ export default function Profile() {
       }
     });
 
-    console.log("Sending filtered data:", filteredFormData);
     dispatch(updateUser(filteredFormData));
   };
-
-  useEffect(() => {
-    if (error || success) {
-      const timeout = setTimeout(() => {
-        dispatch(clearUIState());
-      }, 2000);
-      return () => clearTimeout(timeout);
-    }
-  }, [error, success]);
 
   useEffect(() => {
     if (currentUser.data) {
@@ -167,7 +162,38 @@ export default function Profile() {
     }
   }, [currentUser]);
 
-  console.log(formData);
+  const handleRestore = (e) => {
+    e.preventDefault();
+    dispatch(restoreUser());
+  };
+
+  useEffect(() => {
+    if (updateError) {
+      setStatus({ type: "error", message: updateMessage });
+    } else if (updateSuccess) {
+      setStatus({ type: "success", message: updateMessage });
+    }
+
+    const timeout = setTimeout(() => {
+      setStatus({ type: "", message: "" });
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, [updateError, updateSuccess, updateMessage]);
+
+  useEffect(() => {
+    if (restoreError) {
+      setStatus({ type: "error", message: restoreMessage });
+    } else if (restoreSuccess) {
+      setStatus({ type: "success", message: restoreMessage });
+    }
+
+    const timeout = setTimeout(() => {
+      setStatus({ type: "", message: "" });
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, [restoreError, restoreSuccess, restoreMessage]);
 
   return (
     <>
@@ -258,7 +284,7 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="bg-light-blue rounded-4xl flex-1 text-white-txt">
+            <div className="bg-light-blue rounded-4xl flex-1 text-white-txt -mb-10">
               <p className="text-xl tablet:text-2xl desktop:text-3xl m-5">
                 My Profile
               </p>
@@ -386,48 +412,54 @@ export default function Profile() {
             </div>
 
             <div className="tablet:col-start-2 tablet:col-end-3">
-              {/* Status Messages */}
-              {error && (
-                <p className="text-red-700 text-center mb-7">
-                  {message || "Something went wrong!"}
-                </p>
-              )}
-              {success && (
-                <p className="text-green-700 text-center mb-7">
-                  {message || "Profile updated successfully!"}
-                </p>
-              )}
+              {/* Status messages */}
+              <div style={{ minHeight: "1.5rem", marginBottom: "0.5rem" }}>
+                {status.type === "error" && (
+                  <p className="text-red-700 text-center mb-0">
+                    {status.message}
+                  </p>
+                )}
+
+                {status.type === "success" && (
+                  <p className="text-green-700 text-center mb-0">
+                    {status.message}
+                  </p>
+                )}
+              </div>
+
               <div
                 className="
-                      flex flex-col tablet:flex-row 
-                      items-end justify-end 
-                      gap-4 tablet:gap-10 desktop:gap-20 
-                      mb-10 px-4 tablet:px-8 desktop:px-20
-                      w-full ml-auto
-                    "
+                  flex flex-col tablet:flex-row 
+                  items-end justify-end 
+                  gap-4 tablet:gap-10 desktop:gap-20 
+                  mb-10 w-full pr-0
+                "
               >
                 <button
                   type="submit"
-                  disabled={loading || (image && !formData.profilePicture)}
+                  disabled={
+                    updateLoading || (image && !formData.profilePicture)
+                  }
                   className="
-                      border-2 cursor-pointer text-light-blue px-5 py-2 rounded-full
-                      hover:bg-gray-500 hover:text-white-txt transition-colors
-                      w-full tablet:w-auto text-center
-                    "
+                    border-2 cursor-pointer text-light-blue px-5 py-2 rounded-full
+                    hover:bg-gray-500 hover:text-white-txt transition-colors
+                    w-full tablet:w-auto text-center
+                  "
                 >
-                  {loading ? "Loading..." : "Update"}
+                  {updateLoading ? "Loading..." : "Update"}
                 </button>
 
-                <span
-                  onClick={null}
+                <button
+                  type="button"
+                  onClick={handleRestore}
                   className="
                     text-green-700 cursor-pointer px-5 py-2 border-2 rounded-full 
                     hover:bg-gray-500 hover:text-white-txt
                     w-full tablet:w-auto text-center
                   "
                 >
-                  Restore Account
-                </span>
+                  {restoreLoading ? "Restoring..." : "Restore Account"}
+                </button>
 
                 <span
                   onClick={null}
@@ -444,6 +476,9 @@ export default function Profile() {
           </div>
         </form>
       </div>
+
+      {/* Delete modal */}
+      {/* {showDelete && createPortal(<div className=""></div>, document.body)} */}
     </>
   );
 }
