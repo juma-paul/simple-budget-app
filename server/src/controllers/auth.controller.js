@@ -84,14 +84,14 @@ export const logIn = async (req, res, next) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "strict",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "strict",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -128,7 +128,7 @@ export const refreshAccessToken = async (req, res, next) => {
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       sameSite: "strict",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 15 * 60 * 1000,
     });
     return successResponse(res, 201, "Access token refreshed.");
@@ -159,14 +159,14 @@ export const google = async (req, res, next) => {
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         sameSite: "strict",
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 15 * 60 * 1000,
       });
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         sameSite: "strict",
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
@@ -239,14 +239,14 @@ export const google = async (req, res, next) => {
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         sameSite: "strict",
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 15 * 60 * 1000,
       });
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         sameSite: "strict",
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
