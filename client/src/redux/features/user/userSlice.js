@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { apiCallWithRefresh } from "../../../utils/apiHelper.js";
 import {
   // Generic
   setLoading,
@@ -33,12 +34,13 @@ import {
 export const signUpUser = createAsyncThunk(
   "user/signUpUser",
   async (formData, thunkAPI) => {
-    const dispatch = thunkAPI.dispatch;
+    const { dispatch, rejectWithValue } = thunkAPI;
+
     dispatch(clearUIState());
     dispatch(setLoading(true));
 
     try {
-      const res = await fetch("/api/auth/signup", {
+      const res = await apiCallWithRefresh("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -56,7 +58,7 @@ export const signUpUser = createAsyncThunk(
     } catch (error) {
       dispatch(setError(true));
       dispatch(setMessage(error.message || "Something went wrong"));
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     } finally {
       dispatch(setLoading(false));
     }
@@ -67,17 +69,16 @@ export const signUpUser = createAsyncThunk(
 export const logInUser = createAsyncThunk(
   "user/logInUser",
   async (formData, thunkAPI) => {
-    const dispatch = thunkAPI.dispatch;
+    const { dispatch, rejectWithValue } = thunkAPI;
 
     dispatch(clearUIState());
     dispatch(setLoading(true));
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await apiCallWithRefresh("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: "include",
       });
 
       const data = await res.json();
@@ -94,7 +95,7 @@ export const logInUser = createAsyncThunk(
       dispatch(setError(true));
       dispatch(setMessage(error.message || "Something went wrong!"));
 
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     } finally {
       dispatch(setLoading(false));
     }
@@ -105,15 +106,14 @@ export const logInUser = createAsyncThunk(
 export const logOutUser = createAsyncThunk(
   "user/logOutUser",
   async (_, thunkAPI) => {
-    const dispatch = thunkAPI.dispatch;
+    const { dispatch, rejectWithValue } = thunkAPI;
 
     dispatch(clearUIState());
     dispatch(setLoading(true));
 
     try {
-      const res = await fetch("/api/auth/logout", {
+      const res = await apiCallWithRefresh("/api/auth/logout", {
         method: "POST",
-        credentials: "include",
       });
 
       const data = await res.json();
@@ -130,7 +130,7 @@ export const logOutUser = createAsyncThunk(
       dispatch(setError(true));
       dispatch(setMessage(error.message || "Something went wrong!"));
 
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     } finally {
       dispatch(setLoading(false));
     }
@@ -141,16 +141,16 @@ export const logOutUser = createAsyncThunk(
 export const googleAuthUser = createAsyncThunk(
   "user/googleAuthUser",
   async ({ payload, isConsentFollowUp = false }, thunkAPI) => {
-    const dispatch = thunkAPI.dispatch;
+    const { dispatch, rejectWithValue } = thunkAPI;
 
     dispatch(clearUIState());
     dispatch(setLoading(true));
 
     try {
-      const res = await fetch("/api/auth/google", {
+      const res = await apiCallWithRefresh("/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+
         body: JSON.stringify(payload),
       });
 
@@ -169,7 +169,7 @@ export const googleAuthUser = createAsyncThunk(
     } catch (error) {
       dispatch(setError(true));
       dispatch(setMessage(error.message || "Google login failed"));
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     } finally {
       dispatch(setLoading(false));
     }
@@ -180,19 +180,17 @@ export const googleAuthUser = createAsyncThunk(
 export const updateUser = createAsyncThunk(
   "user/updateUser",
   async (formData, thunkAPI) => {
-    const dispatch = thunkAPI.dispatch;
-    const state = thunkAPI.getState();
-    const userId = state.user.currentUser.data._id;
+    const { dispatch, getState, rejectWithValue } = thunkAPI;
+    const userId = getState().user.currentUser.data._id;
 
     dispatch(clearUpdateState());
     dispatch(setUpdateLoading(true));
 
     try {
-      const res = await fetch(`/api/user/update/${userId}`, {
+      const res = await apiCallWithRefresh(`/api/user/update/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: "include",
       });
 
       const data = await res.json();
@@ -210,7 +208,7 @@ export const updateUser = createAsyncThunk(
     } catch (error) {
       dispatch(setUpdateError(true));
       dispatch(setUpdateMessage(error.message || "Something went wrong!"));
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     } finally {
       dispatch(setUpdateLoading(false));
     }
@@ -221,19 +219,17 @@ export const updateUser = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async (formData, thunkAPI) => {
-    const dispatch = thunkAPI.dispatch;
-    const state = thunkAPI.getState();
-    const userId = state.user.currentUser.data._id;
+    const { dispatch, getState, rejectWithValue } = thunkAPI;
+    const userId = getState().user.currentUser.data._id;
 
     dispatch(clearDeleteState());
     dispatch(setDeleteLoading(true));
 
     try {
-      const res = await fetch(`/api/user/delete/${userId}`, {
+      const res = await apiCallWithRefresh(`/api/user/delete/${userId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: "include",
       });
 
       const data = await res.json();
@@ -250,7 +246,7 @@ export const deleteUser = createAsyncThunk(
     } catch (error) {
       dispatch(setDeleteError(true));
       dispatch(setDeleteMessage(error.message || "Failed to delete account!"));
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     } finally {
       dispatch(setDeleteLoading(false));
     }
@@ -261,17 +257,15 @@ export const deleteUser = createAsyncThunk(
 export const restoreUser = createAsyncThunk(
   "user/restoreUser",
   async (_, thunkAPI) => {
-    const dispatch = thunkAPI.dispatch;
-    const state = thunkAPI.getState();
-    const userId = state.user.currentUser.data._id;
+    const { dispatch, getState, rejectWithValue } = thunkAPI;
+    const userId = getState().user.currentUser.data._id;
 
     dispatch(clearRestoreState());
     dispatch(setRestoreLoading(true));
 
     try {
-      const res = await fetch(`/api/user/restore/${userId}`, {
+      const res = await apiCallWithRefresh(`/api/user/restore/${userId}`, {
         method: "POST",
-        credentials: "include",
       });
 
       const data = await res.json();
