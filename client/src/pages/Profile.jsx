@@ -7,14 +7,18 @@ import {
   setUpdateMessage,
 } from "../redux/features/ui/uiSlice.js";
 import { useEffect, useState } from "react";
-import { restoreUser, updateUser } from "../redux/features/user/userSlice.js";
+import {
+  deleteUser,
+  restoreUser,
+  updateUser,
+} from "../redux/features/user/userSlice.js";
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-// import { createPortal } from "react-dom";
+import { createPortal } from "react-dom";
 
 export default function Profile() {
   const dispatch = useDispatch();
@@ -23,7 +27,8 @@ export default function Profile() {
     useSelector((state) => state.ui);
   const { restoreLoading, restoreError, restoreSuccess, restoreMessage } =
     useSelector((state) => state.ui);
-  // const [showDelete, setShowDelete] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
 
   const [image, setImage] = useState(null);
   const [formData, setFormData] = useState({});
@@ -167,6 +172,15 @@ export default function Profile() {
     dispatch(restoreUser());
   };
 
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    if (deletePassword.trim()) {
+      await dispatch(deleteUser({ currentPassword: deletePassword }));
+      setShowDelete(false);
+      setDeletePassword("");
+    }
+  };
+
   useEffect(() => {
     if (updateError) {
       setStatus({ type: "error", message: updateMessage });
@@ -194,6 +208,8 @@ export default function Profile() {
 
     return () => clearTimeout(timeout);
   }, [restoreError, restoreSuccess, restoreMessage]);
+
+  const isPasswordEntered = deletePassword.trim().length >= 8;
 
   return (
     <>
@@ -284,7 +300,7 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="bg-light-blue rounded-4xl flex-1 text-white-txt -mb-10">
+            <div className="bg-light-blue rounded-4xl flex-1 text-white-txt -mb-5 tablet:-mb-8">
               <p className="text-xl tablet:text-2xl desktop:text-3xl m-5">
                 My Profile
               </p>
@@ -431,7 +447,7 @@ export default function Profile() {
                 className="
                   flex flex-col tablet:flex-row 
                   items-end justify-end 
-                  gap-4 tablet:gap-10 desktop:gap-20 
+                  gap-4 tablet:gap-6 desktop:gap-8 
                   mb-10 w-full pr-0
                 "
               >
@@ -443,7 +459,8 @@ export default function Profile() {
                   className="
                     border-2 cursor-pointer text-light-blue px-5 py-2 rounded-full
                     hover:bg-gray-500 hover:text-white-txt transition-colors
-                    w-full tablet:w-auto text-center
+                    w-full tablet:flex-1 text-center 
+                    tablet:max-w-[170px]
                   "
                 >
                   {updateLoading ? "Loading..." : "Update"}
@@ -451,26 +468,30 @@ export default function Profile() {
 
                 <button
                   type="button"
+                  disabled={restoreLoading}
                   onClick={handleRestore}
                   className="
                     text-green-700 cursor-pointer px-5 py-2 border-2 rounded-full 
                     hover:bg-gray-500 hover:text-white-txt
-                    w-full tablet:w-auto text-center
+                    w-full tablet:flex-1 text-center
+                    tablet:max-w-[170px]
                   "
                 >
                   {restoreLoading ? "Restoring..." : "Restore Account"}
                 </button>
 
-                <span
-                  onClick={null}
+                <button
+                  type="button"
+                  onClick={() => setShowDelete(true)}
                   className="
                     text-error cursor-pointer px-5 py-2 border-2 rounded-full 
                     hover:bg-gray-500 hover:text-white-txt
-                    w-full tablet:w-auto text-center
+                    w-full tablet:flex-1 text-center
+                    tablet:max-w-[170px]
                   "
                 >
                   Delete Account
-                </span>
+                </button>
               </div>
             </div>
           </div>
@@ -478,7 +499,83 @@ export default function Profile() {
       </div>
 
       {/* Delete modal */}
-      {/* {showDelete && createPortal(<div className=""></div>, document.body)} */}
+      {currentUser &&
+        showDelete &&
+        createPortal(
+          <div className="">
+            <div className="fixed inset-0 bg-gradient-to-b from-white-txt/20 to-white-txt/50 backdrop-blur-[0.2rem] flex items-center justify-center p-4 z-50 transition-all duration-300">
+              <div className="relative bg-orange-txt rounded-xl shadow-2xl max-w-md w-full p-6">
+                {/* Cancel (X) button */}
+                <button
+                  className="absolute top-3 right-3 text-2xl text-white-ln hover:text-red-600 focus:outline-none cursor-pointer"
+                  onClick={() => {
+                    setShowDelete(false);
+                    setDeletePassword("");
+                  }}
+                  aria-label="Cancel"
+                  type="button"
+                >
+                  &times;
+                </button>
+
+                {/* Delete icon */}
+                <div className="flex flex-col items-center mb-4">
+                  <svg
+                    className="w-16 h-16 text-white-txt mb-2"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h10"
+                    />
+                  </svg>
+                  <h2 className="text-3xl font-bold text-white-txt mb-2 text-center">
+                    Delete Account
+                  </h2>
+                </div>
+
+                <p className="text-center text-base text-gray-800 mb-4 font-medium">
+                  <span className="font-extrabold text-red-600 text-xl">
+                    Warning:
+                  </span>{" "}
+                  This action will permanently delete all your information,
+                  budget reports and past history. <br />
+                  <br />
+                  Confirm Password to delete your account.
+                </p>
+
+                <form className="w-full flex flex-col items-center">
+                  <input
+                    type="password"
+                    className="w-full px-4 py-2 rounded-lg bg-white-ln focus:border-error focus:outline-none mb-4"
+                    placeholder="Enter your current password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    required
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className={`w-full py-2 rounded bg-red-600 text-white font-semibold text-lg max-w-[170px] cursor-pointer mt-2 transition-opacity ${
+                      isPasswordEntered
+                        ? "opacity-100 hover:bg-red-700"
+                        : "opacity-60 cursor-not-allowed"
+                    }`}
+                    disabled={!isPasswordEntered}
+                  >
+                    Delete Account
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
     </>
   );
 }
