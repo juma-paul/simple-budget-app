@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyUser } from "../middleware/verifyUser.js";
+import { verifyUser, restrictDeletedUsers } from "../middleware/verifyUser.js";
 import { updateUserValidation } from "../validators/userValidator.js";
 import { validate } from "../middleware/validate.js";
 import {
@@ -15,9 +15,10 @@ router.put(
   updateUserValidation,
   validate,
   verifyUser,
+  restrictDeletedUsers,
   updateUser
 );
-router.delete("/delete/:id", verifyUser, deleteUser);
+router.delete("/delete/:id", verifyUser, restrictDeletedUsers, deleteUser);
 router.post("/restore/:id", verifyUser, restoreUser);
 
 export default router;
