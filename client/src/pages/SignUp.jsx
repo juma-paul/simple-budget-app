@@ -59,25 +59,25 @@ export default function SignUp() {
       {/* Container with lines and content */}
       <div className="flex items-center h-0 space-x-4">
         <div className="flex-1 h-0.5 bg-white-ln z-5"></div>
-        <span className="text-white-txt text-3xl tablet:text-5xl capitalize z-5">
+        <span className="text-white-txt text-4xl tablet:text-6xl capitalize z-5">
           Sign Up
         </span>
         <div className="flex-1 h-0.5 bg-white-ln z-5"></div>
       </div>
 
       {/* Orange Box with form inside */}
-      <div className="bg-orange-bg w-[90vw] max-w-md rounded-xl shadow-lg -mt-20 pt-16 pb-0 px-6 absolute left-1/2 transform -translate-x-1/2">
+      <div className="bg-orange-bg w-[95vw] max-w-2xl rounded-xl shadow-lg pt-24 pb-4 px-8 -mt-28 absolute left-1/2 transform -translate-x-1/2">
         {/* Form content */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-3 w-full mt-12"
+          className="flex flex-col gap-4 w-full mt-16"
         >
           <input
             type="text"
             id="username"
             autoComplete="username"
             placeholder="Username"
-            className="bg-white-ln p-[0.25rem] rounded-lg text-xs tablet:text-sm italic pl-4"
+            className="bg-white-bg w-full rounded-lg p-2 italic text-sm tablet:text-base pl-4"
             onChange={handleChange}
             required
           />
@@ -86,7 +86,7 @@ export default function SignUp() {
             id="email"
             autoComplete="email"
             placeholder="Email address"
-            className="bg-white-ln p-[0.25rem] rounded-lg text-xs tablet:text-sm italic pl-4"
+            className="bg-white-bg w-full rounded-lg p-2 italic text-sm tablet:text-base pl-4"
             onChange={handleChange}
             required
           />
@@ -95,13 +95,13 @@ export default function SignUp() {
             id="password"
             autoComplete="new-password"
             placeholder="Password"
-            className="bg-white-ln p-[0.25rem] rounded-lg text-xs tablet:text-sm italic pl-4"
+            className="bg-white-bg w-full rounded-lg p-2 italic text-sm tablet:text-base pl-4"
             onChange={handleChange}
             required
           />
 
           {/* Terms and Privacy */}
-          <div className="flex items-start text-white-txt gap-1 text-xs">
+          <div className="flex items-start text-white-txt gap-2 text-sm">
             <input
               type="checkbox"
               id="acceptedTerms"
@@ -122,7 +122,7 @@ export default function SignUp() {
             </label>
           </div>
 
-          <div className="flex items-start text-white-txt gap-1 text-xs">
+          <div className="flex items-start text-white-txt gap-2 text-sm">
             <input
               type="checkbox"
               id="acceptedPrivacy"
@@ -144,12 +144,12 @@ export default function SignUp() {
           </div>
 
           {error && (
-            <p className="text-white  bg-orange-txt px-2 py-2 rounded-lg mt-1 text-center">
+            <p className="text-white-txt bg-orange-txt text-center py-2 px-6 rounded-lg mt-3 text-sm">
               {message || "Something went wrong"}
             </p>
           )}
           {success && (
-            <p className="text-white bg-orange-txt px-4 py-2 rounded-lg mt-1 text-center">
+            <p className="text-white-txt bg-orange-txt text-center py-2 px-6 rounded-lg mt-3 text-sm">
               {message || "Success!"}
             </p>
           )}
@@ -157,7 +157,7 @@ export default function SignUp() {
           <button
             disabled={isDisabled}
             type="submit"
-            className={`bg-slate-800 text-white font-bold text-xs tablet:text-sm p-[0.25rem] rounded-lg hover:text-orange-bg uppercase cursor-pointer transition-opacity ${
+            className={`bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase cursor-pointer text-sm tablet:text-base p-1 mt-3 transition-opacity ${
               isDisabled ? "opacity-50 cursor-not-allowed" : "opacity-100"
             }`}
           >
@@ -166,19 +166,19 @@ export default function SignUp() {
         </form>
 
         {/* Divider: Overlapping bottom edge slightly */}
-        <div className="flex items-center w-full mt-1/2 mb-1/2">
+        <div className="flex items-center w-full mt-1 mb-1">
           <div className="flex-1 h-[0.005rem] bg-slate-400" />
-          <span className="px-2 text-slate-400 text-xs capitalize">or</span>
+          <span className="px-2 text-slate-400 text-sm capitalize">or</span>
           <div className="flex-1 h-[0.005rem] bg-slate-400" />
         </div>
 
         {/* Google OAuth */}
         <GoogleOAuth />
 
-        <div className="flex gap-2 mt-1 justify-center text-xs pb-2">
+        <div className="flex gap-2 mt-1 justify-center text-sm pb-4">
           <p>Already have an account? </p>
           <Link to="/login">
-            <span className="text-dark-blue hover:text-slate-400">Log In</span>
+            <span className="text-light-blue hover:text-slate-400">Log In</span>
           </Link>
         </div>
       </div>
