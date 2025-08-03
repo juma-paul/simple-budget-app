@@ -13,7 +13,7 @@ export default function Header() {
     <div className="bg-dark-blue h-14 tablet:h-16 laptop:h-18 fixed left-0 right-0 z-50">
       <div className="flex items-center justify-between h-full px-4 tablet:px-6 laptop:px-8 max-w-full mx-auto z-51">
         <Link to="/">
-          <img src={logo} alt="Logo" className="h-8 tablet:h-10 laptop:h-12" />
+          <img src={logo} alt="Logo" className="h-10 laptop:h-12" />
         </Link>
 
         {/* Desktop Navigation */}
@@ -53,21 +53,21 @@ export default function Header() {
         </ul>
 
         {/* Mobile Login + Hamburger */}
-        <div className="tablet:hidden flex items-center space-x-3">
+        <div className="tablet:hidden flex items-center space-x-4">
           <Link to="/login" className="hover:opacity-80 transition-opacity">
-            <span className="text-black text-sm px-2 py-1 font-bold bg-white-bg rounded-full hover:text-orange-txt whitespace-nowrap">
+            <span className="text-black text-lg px-2 py-1 font-extrabold bg-white-bg rounded-full hover:text-orange-txt whitespace-nowrap">
               Log In
             </span>
           </Link>
           <div className="w-px h-4 bg-white-bg opacity-50"></div>
           <button
-            className="flex flex-col justify-center items-center w-6 h-6 space-y-1 group"
+            className="flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
-            <div className="w-5 h-0.5 bg-white-bg group-hover:bg-gray-200 transition-colors"></div>
-            <div className="w-5 h-0.5 bg-white-bg group-hover:bg-gray-200 transition-colors"></div>
-            <div className="w-5 h-0.5 bg-white-bg group-hover:bg-gray-200 transition-colors"></div>
+            <div className="w-8 h-0.5 bg-white-bg group-hover:bg-gray-200 transition-colors"></div>
+            <div className="w-8 h-0.5 bg-white-bg group-hover:bg-gray-200 transition-colors"></div>
+            <div className="w-8 h-0.5 bg-white-bg group-hover:bg-gray-200 transition-colors"></div>
           </button>
         </div>
       </div>
