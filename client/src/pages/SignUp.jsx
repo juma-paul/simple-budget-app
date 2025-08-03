@@ -66,7 +66,7 @@ export default function SignUp() {
       </div>
 
       {/* Orange Box with form inside */}
-      <div className="bg-orange-bg w-[95vw] max-w-2xl rounded-xl shadow-lg pt-24 pb-4 px-8 -mt-28 absolute left-1/2 transform -translate-x-1/2">
+      <div className="bg-orange-bg w-[90vw] tablet:w-[95vw] max-w-2xl rounded-xl shadow-lg pt-24 pb-4 px-8 -mt-28 absolute left-1/2 transform -translate-x-1/2">
         {/* Form content */}
         <form
           onSubmit={handleSubmit}
