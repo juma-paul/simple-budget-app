@@ -5,6 +5,10 @@ import imageCompression from "browser-image-compression";
 import {
   setUpdateError,
   setUpdateMessage,
+  clearUpdateState,
+  clearRestoreState,
+  clearDeleteState,
+  clearUIState,
 } from "../redux/features/ui/uiSlice.js";
 import { useEffect, useState } from "react";
 import {
@@ -27,6 +31,9 @@ export default function Profile() {
     useSelector((state) => state.ui);
   const { restoreLoading, restoreError, restoreSuccess, restoreMessage } =
     useSelector((state) => state.ui);
+  const { deleteSuccess, deleteError, deleteMessage } = useSelector(
+    (state) => state.ui
+  );
   const [showDelete, setShowDelete] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
 
@@ -209,7 +216,27 @@ export default function Profile() {
     return () => clearTimeout(timeout);
   }, [restoreError, restoreSuccess, restoreMessage]);
 
+  useEffect(() => {
+    if (deleteError) {
+      setStatus({ type: "error", message: deleteMessage });
+    } else if (deleteSuccess) {
+      setStatus({ type: "success", message: deleteMessage });
+    }
+    const timeout = setTimeout(() => {
+      setStatus({ type: "", message: "" });
+    }, 2000);
+    return () => clearTimeout(timeout);
+  }, [deleteError, deleteSuccess, deleteMessage]);
+
   const isPasswordEntered = deletePassword.trim().length >= 8;
+
+  useEffect(() => {
+    // Clear messages when component mounts or when currentUser changes
+    dispatch(clearUpdateState());
+    dispatch(clearRestoreState());
+    dispatch(clearDeleteState());
+    dispatch(clearUIState());
+  }, [dispatch, currentUser]);
 
   return (
     <>
@@ -533,15 +560,12 @@ export default function Profile() {
                       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h10"
                     />
                   </svg>
-                  <h2 className="text-3xl font-bold text-white-txt mb-2 text-center">
-                    Delete Account
+                  <h2 className="text-3xl font-bold text-red-700 mb-2 text-center">
+                    Warning!
                   </h2>
                 </div>
 
-                <p className="text-center text-base text-gray-800 mb-4 font-medium">
-                  <span className="font-extrabold text-red-600 text-xl">
-                    Warning:
-                  </span>{" "}
+                <p className="text-center text-base text-white-txt mb-4 font-medium">
                   This action will permanently delete all your information,
                   budget reports and past history. <br />
                   <br />
