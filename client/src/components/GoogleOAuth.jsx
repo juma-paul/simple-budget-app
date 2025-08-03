@@ -117,7 +117,7 @@ export default function GoogleOAuth() {
         type="button"
         onClick={handleGoogleClick}
         disabled={googleLoading}
-        className={`bg-green-900 text-white font-bold text-xs tablet:text-sm w-full rounded-lg hover:text-orange-bg p-[0.25rem] uppercase hover:opacity-90 mb-2 transition-opacity ${
+        className={`bg-green-900 text-white font-bold text-sm tablet:text-base w-full rounded-lg hover:text-orange-bg p-1 uppercase hover:opacity-90 mb-2 transition-opacity ${
           googleLoading
             ? "opacity-50 cursor-not-allowed"
             : "opacity-100 cursor-pointer"
