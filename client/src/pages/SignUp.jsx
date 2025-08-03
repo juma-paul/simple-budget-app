@@ -54,7 +54,7 @@ export default function SignUp() {
 
   return (
     <section>
-      <div className="bg-dark-blue min-h-[20vh]"></div>
+      <div className="bg-dark-blue min-h-[30vh]"></div>
 
       {/* Container with lines and content */}
       <div className="flex items-center h-0 space-x-4">
@@ -182,7 +182,7 @@ export default function SignUp() {
           </Link>
         </div>
       </div>
-      <div className="bg-light-blue min-h-[80vh]"></div>
+      <div className="bg-light-blue min-h-[70vh]"></div>
     </section>
   );
 }
