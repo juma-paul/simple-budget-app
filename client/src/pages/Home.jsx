@@ -12,12 +12,15 @@ export default function Home() {
 
         {/* Middle: content with split background */}
         <span
-          className="px-4 text-white-txt uppercase font-roboto-flex text-3xl tablet:text-4xl"
+          className="px-4 text-white-txt uppercase font-roboto-flex text-6xl tablet:text-7xl"
           style={{
             background: "linear-gradient(to bottom,#04254b 50%, #00488c 50%)",
           }}
         >
-          The <span className="text-orange-txt font-belanosima text-3xl tablet:text-[2.45rem]">Simple</span>
+          The{" "}
+          <span className="text-orange-txt font-belanosima text-[4.0rem] tablet:text-[4.8rem]">
+            Simple
+          </span>
           <p>Budget App</p>
         </span>
 
@@ -25,13 +28,13 @@ export default function Home() {
         <div className="flex-1 h-0.5 bg-white-bg"></div>
       </div>
 
-      <section className="bg-light-blue min-h-[50vh] tablet:min-h-[55vh] laptop:min-h-[60vh] flex flex-col items-center justify-center space-y-4 text-center">
-        <p className="text-white-txt text-[0.75rem] tablet:text-[1rem]">
+      <section className="bg-light-blue min-h-[50vh] tablet:min-h-[55vh] laptop:min-h-[60vh] flex flex-col items-center justify-start pt-32 tablet:pt-40 space-y-8 text-center">
+        <p className="text-white-txt text-xl tablet:text-3xl">
           Never Overspend Again
         </p>
         <Link
           to="/login"
-          className="text-white-txt text-[0.5rem] tablet:text-[0.75rem] bg-orange-bg px-2 py-1 hover:text-white-bg"
+          className="text-white-txt text-xl tablet:text-2xl bg-orange-bg px-2 py-1 hover:text-white-bg"
         >
           Start Budgeting
         </Link>
