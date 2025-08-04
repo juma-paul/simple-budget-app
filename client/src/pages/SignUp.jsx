@@ -157,8 +157,10 @@ export default function SignUp() {
           <button
             disabled={isDisabled}
             type="submit"
-            className={`bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase cursor-pointer text-sm tablet:text-base p-1 mt-3 transition-opacity ${
-              isDisabled ? "opacity-50 cursor-not-allowed" : "opacity-100"
+            className={`bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase text-sm tablet:text-base p-1 mt-3 transition-opacity ${
+              isDisabled
+                ? "opacity-50 cursor-not-allowed"
+                : "opacity-100 cursor-pointer"
             }`}
           >
             {loading ? "Loading..." : "Sign Up"}
