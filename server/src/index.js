@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import budgetRoutes from "./routes/budget.routes.js";
 
 // Register background tasks
 import "./tasks/deleteExpiredUsers.js";
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use("/api/sys", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/budget", budgetRoutes);
 
 // Static files from client build (production)
 if (process.env.NODE_ENV === "production") {
