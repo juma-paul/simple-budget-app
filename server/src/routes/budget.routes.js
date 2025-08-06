@@ -1,5 +1,6 @@
 import express from "express";
 import { verifyUser } from "../middleware/verifyUser.js";
+import { validate } from "../middleware/validate.js";
 import { createBudget } from "../controllers/budget.controller.js";
 import { budgetValidation } from "../validators/budgetValidator.js";
 
