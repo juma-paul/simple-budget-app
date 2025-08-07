@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setTotalBudget,
@@ -16,6 +16,7 @@ import {
   JapaneseYen,
   AlertTriangle,
 } from "lucide-react";
+import { validateBudget } from "../utils/validateBudget.js";
 
 const currencyIcons = {
   USD: DollarSign,
@@ -46,9 +47,42 @@ export default function BudgetStep1() {
   const dispatch = useDispatch();
   const { tempData, validation } = useSelector((state) => state.budget);
   const { errors } = validation;
+  const [showErrors, setShowErrors] = useState(false);
+  const errorTimeoutRef = useRef(null);
 
-  const isNextDisabled = !validation.isValid || !tempData.totalBudget;
   const CurrencyIcon = currencyIcons[tempData.currency] || DollarSign;
+
+  // Clear error timeout on unmount or new error
+  useEffect(() => {
+    return () => {
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleContinue = () => {
+    setShowErrors(true);
+    const validationResult = validateBudget(tempData);
+    dispatch(setTotalBudget(tempData.totalBudget));
+    if (validationResult.isValid) {
+      dispatch(setStep(2));
+      setShowErrors(false);
+    } else {
+      // Auto-clear errors after 4 seconds
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+      errorTimeoutRef.current = setTimeout(() => {
+        setShowErrors(false);
+      }, 3000);
+    }
+  };
+
+  const handleInputChange = (val) => {
+    setShowErrors(false);
+    dispatch(setTotalBudget(val || ""));
+  };
 
   return (
     <div className="space-y-6">
@@ -115,32 +149,35 @@ export default function BudgetStep1() {
 
       {/* Currency Input */}
       <div className="relative">
-        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-          <CurrencyIcon className="h-6 w-6 text-gray-400" />
-          <span className="text-gray-500 font-semibold">
-            {tempData.currency}
-          </span>
-        </div>
         <MaskedCurrencyInput
           currency={tempData.currency}
-          value={tempData.totalBudget}
-          onChange={(val) => dispatch(setTotalBudget(val))}
+          defaultValue={tempData.totalBudget}
+          onChange={handleInputChange}
         />
       </div>
 
-      {/* Error message */}
-      {errors.totalBudget && (
-        <div className="flex items-center gap-2 text-red-400 bg-red-900/20 rounded-lg p-3">
-          <AlertTriangle className="h-5 w-5" />
-          <span>{errors.totalBudget}</span>
+      {/* Error messages */}
+      {showErrors && (
+        <div className="space-y-2 transition-opacity duration-500 ease-out opacity-100">
+          {errors.totalBudget && (
+            <div className="flex items-center gap-2 text-red-400 bg-red-900/20 rounded-lg p-3">
+              <AlertTriangle className="h-5 w-5" />
+              <span>{errors.totalBudget}</span>
+            </div>
+          )}
+          {errors.plannedAmount && (
+            <div className="flex items-center gap-2 text-red-400 bg-red-900/20 rounded-lg p-3">
+              <AlertTriangle className="h-5 w-5" />
+              <span>{errors.plannedAmount}</span>
+            </div>
+          )}
         </div>
       )}
 
       {/* Continue button */}
       <button
         type="button"
-        disabled={isNextDisabled}
-        onClick={() => dispatch(setStep(2))}
+        onClick={handleContinue}
         className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg transition-colors"
       >
         Continue to Categories
