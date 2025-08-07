@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import CurrencyInput from "react-currency-input-field";
 
 const currencyLocales = {
   USD: { locale: "en-US", currency: "USD" },
@@ -8,33 +9,27 @@ const currencyLocales = {
   INR: { locale: "en-IN", currency: "INR" },
 };
 
-export default function MaskedCurrencyInput({ currency = "USD", onChange }) {
-  const [rawValue, setRawValue] = useState("");
-
-  const formatCurrency = (val) => {
-    const { locale, currency: currCode } =
-      currencyLocales[currency] || currencyLocales["USD"];
-    const number = parseFloat(val);
-    const safeNumber = isNaN(number) ? 0 : number / 100;
-
-    return safeNumber.toLocaleString(locale, {
-      minimumFractionDigits: currCode === "JPY" ? 0 : 2,
-      maximumFractionDigits: currCode === "JPY" ? 0 : 2,
-    });
-  };
-
-  const handleChange = (e) => {
-    const digitsOnly = e.target.value.replace(/\D/g, "");
-    setRawValue(digitsOnly);
-    onChange(formatCurrency(digitsOnly));
-  };
+export default function MaskedCurrencyInput({
+  currency = "USD",
+  onChange,
+  defaultValue = "",
+}) {
+  const { locale, currency: currCode } =
+    currencyLocales[currency] || currencyLocales["USD"];
+  const decimals = currCode === "JPY" ? 0 : 2;
 
   return (
-    <input
-      type="text"
-      value={formatCurrency(rawValue)}
-      onChange={handleChange}
-      placeholder={formatCurrency("")}
+    <CurrencyInput
+      intlConfig={{ locale, currency: currCode }}
+      decimalsLimit={decimals}
+      defaultValue={defaultValue ? parseFloat(defaultValue) : undefined}
+      onValueChange={(value) => onChange(value || "")} // Pass empty string for undefined
+      placeholder={new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: currCode,
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }).format(0)}
       className="w-full p-2 rounded border text-right"
     />
   );
