@@ -19,6 +19,7 @@
     "firebase": "^11.10.0",
     "lucide-react": "^0.536.0",
     "react": "^19.1.0",
+    "react-currency-input-field": "^3.10.0",
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.3",
