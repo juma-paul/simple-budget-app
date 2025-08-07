@@ -51,11 +51,12 @@ export default function BudgetStep2() {
   const isValidName = (name) =>
     name.trim() && /[a-zA-Z]/.test(name) && !/^\d+$/.test(name);
 
+  const roundToTwo = (num) => Math.round(num * 100) / 100;
+
   const canAdd =
     isValidName(newCategory.name) &&
     isValidAmount(newCategory.amount) &&
-    parseFloat(newCategory.amount) <=
-      (isFinite(remainingBudget) ? remainingBudget : Infinity);
+    roundToTwo(parseFloat(newCategory.amount)) <= roundToTwo(remainingBudget);
 
   const handleAdd = () => {
     setShowCategoryErrors(true);
@@ -223,7 +224,7 @@ export default function BudgetStep2() {
         onClick={handleNext}
         className="mt-4 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
       >
-        Next: Review & Confirm
+        Review & Confirm
       </button>
     </div>
   );
