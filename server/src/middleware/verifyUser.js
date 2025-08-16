@@ -5,7 +5,9 @@ import { errorHandler } from "../utils/errorHandler.js";
 export const verifyUser = async (req, res, next) => {
   const token = req.cookies.accessToken;
   if (!token) {
-    return next(errorHandler(401, "You are not authenticated!"));
+    const error = errorHandler(401, "You are not authenticated!");
+    error.error = "token_expired";
+    return next(error);
   }
 
   try {
@@ -15,7 +17,9 @@ export const verifyUser = async (req, res, next) => {
     const user = await User.findById(decoded.id);
 
     if (!user) {
-      return next(errorHandler(401, "User not found."));
+      const error = errorHandler(401, "User not found.");
+      error.error = "token_expired";
+      return next(error);
     }
 
     req.userId = user._id.toString();
@@ -23,7 +27,13 @@ export const verifyUser = async (req, res, next) => {
 
     next();
   } catch (err) {
-    return next(errorHandler(403, "Access denied. Please login again."));
+    if (err.name === "TokenExpiredError") {
+      const error = errorHandler(401, "Access token expired.");
+      error.error = "token_expired";
+      return next(error);
+    }
+    const error = errorHandler(403, "Access denied. Please login again.");
+    return next(error);
   }
 };
 
@@ -35,4 +45,4 @@ export const restrictDeletedUsers = (req, res, next) => {
     });
   }
   next();
-}
+};
