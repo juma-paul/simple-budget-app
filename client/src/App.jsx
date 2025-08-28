@@ -13,6 +13,7 @@ import Reviews from "./pages/Reviews";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import { useSelector } from "react-redux";
+import { useAuthStore } from "./store/authStore.js";
 
 function App() {
   return (
@@ -23,14 +24,12 @@ function App() {
 }
 
 function AppComponent() {
-  const currentUser = useSelector((state) => state.user.currentUser);
-
-  const isProtected = !!currentUser;
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Conditionally render headers */}
-      {isProtected ? <ProtectedHeader /> : <Header />}
+      {isAuthenticated ? <ProtectedHeader /> : <Header />}
 
       {/* Main Content */}
       <main className="flex-1">
