@@ -1,20 +1,19 @@
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logOutUser } from "../redux/features/user/userSlice.js";
-import { clearUIState } from "../redux/features/ui/uiSlice.js";
 import logo from "../assets/SBA_Logo.png";
 import DEFAULT_AVATAR_IMAGE from "../assets/default-avatar.png";
 import { useEffect, useRef, useState } from "react";
+import { useAuthStore } from "../store/authStore.js";
 
 export default function ProtectedHeader() {
-  const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user.currentUser);
+  const user = useAuthStore((state) => state.user);
+  const clearUser = useAuthStore((state) => state.clearUser);
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const onLogout = async () => {
-    await dispatch(logOutUser());
-    dispatch(clearUIState());
+    clearUser();
+    // SendAPIRequest
   };
 
   const toggleDropdown = () => {
@@ -50,14 +49,10 @@ export default function ProtectedHeader() {
           {/* Profile Picture & Settings(Logout, Profile) */}
           <div className="flex items-center gap-4 relative">
             <img
-              src={
-                currentUser.data?.profilePicture
-                  ? currentUser.data.profilePicture
-                  : DEFAULT_AVATAR_IMAGE
-              }
+              src={user?.profilePicture || DEFAULT_AVATAR_IMAGE}
               alt="Profile"
-              className="w-6 h-6 tablet:w-7 tablet:h-7 laptop:w-8 laptop:h-8 rounded-full object-cover border-2 border-white-txt"
               onError={(e) => (e.target.src = DEFAULT_AVATAR_IMAGE)}
+              className="w-6 h-6 tablet:w-7 tablet:h-7 laptop:w-8 laptop:h-8 rounded-full object-cover border-2 border-white-txt"
             />
             <div className="relative" ref={dropdownRef}>
               {/* Gear/Settings Iconwith Dropdown */}
