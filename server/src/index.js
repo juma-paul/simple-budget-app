@@ -49,12 +49,20 @@ if (process.env.NODE_ENV === "production") {
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
-  return res.status(statusCode).json({
+
+  const response = {
     success: false,
     statusCode,
     message,
     data: {},
-  });
+  };
+
+  // Include custom error properties if they exist
+  if (err.error) {
+    response.error = err.error;
+  }
+
+  return res.status(statusCode).json(response);
 });
 
 const port = process.env.PORT || 6798;
