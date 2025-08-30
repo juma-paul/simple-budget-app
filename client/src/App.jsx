@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Layout from "./components/Layout";
 import PrivateRoute from "./components/PrivateRoute";
+import PublicRoute from "./components/PublicRoute.jsx";
 import ProtectedHeader from "./components/ProtectedHeader";
 
 import Home from "./pages/Home";
@@ -12,7 +13,6 @@ import LogIn from "./pages/LogIn";
 import Reviews from "./pages/Reviews";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
-import { useSelector } from "react-redux";
 import { useAuthStore } from "./store/authStore.js";
 
 function App() {
@@ -35,6 +35,7 @@ function AppComponent() {
       <main className="flex-1">
         <Routes>
           {/* Public */}
+
           <Route
             path="/"
             element={
@@ -51,22 +52,25 @@ function AppComponent() {
               </Layout>
             }
           />
-          <Route
-            path="/login"
-            element={
-              <Layout>
-                <LogIn />
-              </Layout>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <Layout>
-                <SignUp />
-              </Layout>
-            }
-          />
+          <Route element={<PublicRoute />}>
+            <Route
+              path="/login"
+              element={
+                <Layout>
+                  <LogIn />
+                </Layout>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <Layout>
+                  <SignUp />
+                </Layout>
+              }
+            />
+          </Route>
+
           <Route
             path="/reviews"
             element={
