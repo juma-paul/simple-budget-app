@@ -1,18 +1,21 @@
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
-import { useDispatch, useSelector } from "react-redux";
 import { app } from "../firebase.js";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useNotificationStore } from "../store/notificationStore.js";
+import { useAuthStore } from "../store/authStore.js";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { googleAuthUser } from "../redux/features/user/userSlice.js";
-import { clearUIState } from "../redux/features/ui/uiSlice";
+import { useMutation } from "@tanstack/react-query";
 import { createPortal } from "react-dom";
+import { googleOAuthApi } from "../api/authApi.js";
+import Loading from "./Loading.jsx";
+import Notification from "./Notification.jsx";
 
 export default function GoogleOAuth() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { setNotification, clearNotification } = useNotificationStore();
+  const { setUser } = useAuthStore();
 
-  const { googleLoading, error, success } = useSelector((state) => state.ui);
   const [showConsentModal, setShowConsentModal] = useState(false);
   const [consentData, setConsentData] = useState({
     acceptedTerms: false,
@@ -22,6 +25,33 @@ export default function GoogleOAuth() {
 
   const isConsentValid =
     consentData.acceptedTerms && consentData.acceptedPrivacy;
+
+  const { mutate: googleAuth, isPending } = useMutation({
+    mutationFn: googleOAuthApi,
+    onSuccess: (data) => {
+      // Check if consent is required (new user)
+      if (data?.status === "consent_required") {
+        setTempUserData(data.tempUserData);
+        setShowConsentModal(true);
+        return;
+      }
+
+      // User is authenticated (existing user or new user after consent)
+      if (data?.data) {
+        setNotification("success", data.message || "Signed in successfully!");
+
+        setTimeout(() => {
+          setUser(data.data);
+          clearNotification();
+          navigate("/dashboard");
+        }, 1500);
+      }
+    },
+    onError: (error) => {
+      setNotification("error", error.message);
+      handleConsentCancel();
+    },
+  });
 
   const handleGoogleClick = async () => {
     try {
@@ -34,96 +64,67 @@ export default function GoogleOAuth() {
       // Extract user data
       const { displayName, email, photoURL } = result.user;
 
-      // Send to redux
-      const payload = {
+      // Send to backend (first attempt checks if consent is true/false)
+      const userData = {
         name: displayName,
         email,
         photo: photoURL,
+        consentAccepted: false,
       };
 
-      const resultAction = await dispatch(
-        googleAuthUser({ payload, isConsentFollowUp: false })
-      );
-
-      if (resultAction.payload?.type === "consent_required") {
-        setTempUserData(resultAction.payload.tempUserData);
-        setShowConsentModal(true);
-      } else if (resultAction.payload?.type === "success") {
-        // Navigate to dashboard (handled in useEffect)
-      }
+      googleAuth(userData);
     } catch (error) {
       console.error("Google OAuth error:", error);
+      setNotification("error", "Google authentication failed");
     }
   };
 
-  // Toggles checkbox state
-  const handleConsentChange = (field) => {
-    setConsentData((prev) => ({ ...prev, [field]: !prev[field] }));
+  // Save actions on consent fields
+  const handleConsentChange = (e) => {
+    const { name, checked } = e.target;
+    setConsentData((prev) => ({ ...prev, [name]: checked }));
   };
 
-  // Cancel Consent
+  // Cancel consent form
   const handleConsentCancel = () => {
     setShowConsentModal(false);
     setTempUserData(null);
     setConsentData({ acceptedTerms: false, acceptedPrivacy: false });
   };
 
-  // Consent Submission
-  const handleConsentSubmit = async () => {
+  // Submit the consent form
+  const handleConsentSubmit = () => {
     if (!tempUserData || !isConsentValid) return;
 
+    // Submit with consent accepted
     const payload = {
       ...tempUserData,
       consentAccepted: true,
     };
 
-    const resultAction = await dispatch(
-      googleAuthUser({ payload, isConsentFollowUp: true })
-    );
+    googleAuth(payload);
 
-    if (resultAction.payload?.type === "success") {
-      setShowConsentModal(false);
-      setTempUserData(null);
-      setConsentData({ acceptedTerms: false, acceptedPrivacy: false });
-    }
+    setShowConsentModal(false);
+    setConsentData({ acceptedTerms: false, acceptedPrivacy: false });
   };
-
-  // Navigation after successful authentication
-  useEffect(() => {
-    if (success) {
-      const timeout = setTimeout(() => {
-        dispatch(clearUIState());
-        navigate("/dashboard");
-      }, 1000);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [success, dispatch, navigate]);
-
-  // Show error and clear after delay
-  useEffect(() => {
-    if (error) {
-      const timeout = setTimeout(() => {
-        dispatch(clearUIState());
-      }, 3000);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [error, dispatch]);
 
   return (
     <>
       <button
         type="button"
         onClick={handleGoogleClick}
-        disabled={googleLoading}
+        disabled={isPending}
         className={`bg-green-900 text-white font-bold text-sm tablet:text-base w-full rounded-lg hover:text-orange-bg p-1 uppercase hover:opacity-90 mb-2 transition-opacity ${
-          googleLoading
+          isPending
             ? "opacity-50 cursor-not-allowed"
             : "opacity-100 cursor-pointer"
         }`}
       >
-        {googleLoading ? "Loading..." : "Continue with Google"}
+        {isPending ? (
+          <Loading color="white" size={24} />
+        ) : (
+          "Continue with Google"
+        )}
       </button>
 
       {/* Consent Modal */}
@@ -150,8 +151,9 @@ export default function GoogleOAuth() {
                 >
                   <input
                     type="checkbox"
+                    name="acceptedTerms"
                     checked={consentData.acceptedTerms}
-                    onChange={() => handleConsentChange("acceptedTerms")}
+                    onChange={handleConsentChange}
                     className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
 
@@ -175,8 +177,9 @@ export default function GoogleOAuth() {
                 >
                   <input
                     type="checkbox"
+                    name="acceptedPrivacy"
                     checked={consentData.acceptedPrivacy}
-                    onChange={() => handleConsentChange("acceptedPrivacy")}
+                    onChange={handleConsentChange}
                     className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
 
@@ -193,6 +196,8 @@ export default function GoogleOAuth() {
                   </span>
                 </label>
 
+                <Notification />
+
                 <div className="flex flex-col tablet:flex-row gap-3">
                   {/* Cancel */}
                   <button
@@ -205,14 +210,18 @@ export default function GoogleOAuth() {
                   {/* Submit & Continue */}
                   <button
                     onClick={handleConsentSubmit}
-                    disabled={!isConsentValid || googleLoading}
+                    disabled={!isConsentValid || isPending}
                     className={`w-full sm:w-auto px-4 py-2 rounded-lg text-white transition-colors ${
-                      !isConsentValid || googleLoading
+                      !isConsentValid || isPending
                         ? "bg-green-700 opacity-50 cursor-not-allowed"
                         : "bg-green-700 hover:bg-success"
                     }`}
                   >
-                    {googleLoading ? "Loading..." : "Submit & Continue"}
+                    {isPending ? (
+                      <Loading color="white" size={24} />
+                    ) : (
+                      "Submit & Continue"
+                    )}
                   </button>
                 </div>
               </div>
