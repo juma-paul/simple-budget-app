@@ -1,56 +1,54 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useState, useEffect } from "react";
-import { clearUIState } from "../redux/features/ui/uiSlice.js";
-import { signUpUser } from "../redux/features/user/userSlice.js";
+import { useMutation } from "@tanstack/react-query";
+import { signupApi } from "../api/authApi.js";
+import { useNotificationStore } from "../store/notificationStore.js";
+import Notification from "../components/Notification.jsx";
+import Loading from "../components/Loading.jsx";
+import { useState } from "react";
 import GoogleOAuth from "../components/GoogleOAuth.jsx";
 
 export default function SignUp() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, success, error, message } = useSelector((state) => state.ui);
-  const [formData, setFormData] = useState({});
+  const { setNotification, clearNotification } = useNotificationStore();
+
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    acceptedTerms: false,
+    acceptedPrivacy: false,
+  });
+
+  const { mutate: signup, isPending } = useMutation({
+    mutationFn: signupApi,
+    onSuccess: (data) => {
+      setNotification("success", data.message || "Signed up successfully");
+
+      setTimeout(() => {
+        clearNotification();
+        navigate("/login");
+      }, 1500); 
+    },
+    onError: (error) => {
+      setNotification("error", error.message);
+    },
+  });
+
+  const isDisabled = !formData.acceptedTerms || !formData.acceptedPrivacy;
 
   const handleChange = (e) => {
-    const { id, type, value, checked } = e.target;
+    const { name, type, checked, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [id]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const resultAction = await dispatch(signUpUser(formData));
-
-    // Access the `payload` directly and check success
-    if (signUpUser.fulfilled.match(resultAction)) {
-      const { success } = resultAction.payload;
-      if (success) {
-        navigateAfterSignup();
-      }
-    }
+    signup(formData);
   };
-
-  const isDisabled =
-    !formData.acceptedTerms || !formData.acceptedPrivacy || loading;
-
-  const navigateAfterSignup = () => {
-    setTimeout(() => {
-      dispatch(clearUIState());
-      navigate("/login");
-    }, 1000);
-  };
-
-  // Show error and clear after delay
-  useEffect(() => {
-    if (error) {
-      const timeout = setTimeout(() => {
-        dispatch(clearUIState());
-      }, 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [error, dispatch]);
 
   return (
     <section>
@@ -74,16 +72,19 @@ export default function SignUp() {
         >
           <input
             type="text"
-            id="username"
+            name="username"
+            value={formData.username}
             autoComplete="username"
             placeholder="Username"
             className="bg-white-bg w-full rounded-lg p-2 italic text-sm tablet:text-base pl-4"
             onChange={handleChange}
+            autoFocus
             required
           />
           <input
             type="email"
-            id="email"
+            name="email"
+            value={formData.email}
             autoComplete="email"
             placeholder="Email address"
             className="bg-white-bg w-full rounded-lg p-2 italic text-sm tablet:text-base pl-4"
@@ -92,8 +93,9 @@ export default function SignUp() {
           />
           <input
             type="password"
-            id="password"
-            autoComplete="new-password"
+            name="password"
+            value={formData.password}
+            autoComplete="current-password"
             placeholder="Password"
             className="bg-white-bg w-full rounded-lg p-2 italic text-sm tablet:text-base pl-4"
             onChange={handleChange}
@@ -104,8 +106,8 @@ export default function SignUp() {
           <div className="flex items-start text-white-txt gap-2 text-sm">
             <input
               type="checkbox"
-              id="acceptedTerms"
-              checked={formData.acceptedTerms || false}
+              name="acceptedTerms"
+              checked={formData.acceptedTerms}
               onChange={handleChange}
               required
             />
@@ -125,8 +127,8 @@ export default function SignUp() {
           <div className="flex items-start text-white-txt gap-2 text-sm">
             <input
               type="checkbox"
-              id="acceptedPrivacy"
-              checked={formData.acceptedPrivacy || false}
+              name="acceptedPrivacy"
+              checked={formData.acceptedPrivacy}
               onChange={handleChange}
               required
             />
@@ -143,16 +145,7 @@ export default function SignUp() {
             </label>
           </div>
 
-          {error && (
-            <p className="text-white-txt bg-orange-txt text-center py-2 px-6 rounded-lg mt-3 text-sm">
-              {message || "Something went wrong"}
-            </p>
-          )}
-          {success && (
-            <p className="text-white-txt bg-orange-txt text-center py-2 px-6 rounded-lg mt-3 text-sm">
-              {message || "Success!"}
-            </p>
-          )}
+          <Notification />
 
           <button
             disabled={isDisabled}
@@ -163,7 +156,7 @@ export default function SignUp() {
                 : "opacity-100 cursor-pointer"
             }`}
           >
-            {loading ? "Loading..." : "Sign Up"}
+            {isPending ? <Loading color="white" size={24} /> : "Sign Up"}
           </button>
         </form>
 
