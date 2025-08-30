@@ -10,7 +10,7 @@ import Notification from "../components/Notification.jsx";
 
 export default function LogIn() {
   const setUser = useAuthStore((state) => state.setUser);
-  const { setNotification } = useNotificationStore();
+  const { setNotification, clearNotification } = useNotificationStore();
 
   // navigate
   const navigate = useNavigate();
@@ -21,12 +21,15 @@ export default function LogIn() {
     mutationFn: loginApi,
     onSuccess: (data) => {
       if (data?.data) {
-        setUser(data.data);
         setNotification("success", data.message || "Login successful!");
         setFormData({ identifier: "", password: "" });
-
+        
         // Navigate to dashboard
-        navigate("/dashboard");
+        setTimeout(() => {
+          setUser(data.data);
+          clearNotification();
+          navigate("/dashboard");
+        }, 1500); 
       }
     },
     onError: (err) => {
@@ -92,26 +95,12 @@ export default function LogIn() {
             />
 
             <Notification />
-            {/* {isPending && (
-              <Loading loading={isPending} size={24} fullScreen={false} />
-            )} */}
 
-            {/* <button
+            <button
               type="submit"
               className="bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase cursor-pointer text-sm tablet:text-base p-1 mt-3"
             >
-              {isPending ? "Logging in..." : "Login"}
-            </button> */}
-            <button
-              type="submit"
-              className="bg-slate-800 hover:opacity-90 hover:text-orange-bg w-full rounded-lg text-white-txt font-bold uppercase cursor-pointer text-sm tablet:text-base p-3 mt-3 disabled:opacity-50 flex items-center justify-center gap-2"
-              disabled={isPending}
-            >
-              {isPending && (
-                <Loading loading={isPending} size={24} fullScreen={false} />
-              )}
-              {/* {isPending ? "Logging in..." : "Login"} */}
-              Login
+              {isPending ? <Loading color="white" size={24} /> : "Login"}
             </button>
           </form>
 
