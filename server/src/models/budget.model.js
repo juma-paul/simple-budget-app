@@ -65,18 +65,5 @@ const budgetSchema = new mongoose.Schema(
 // Compound index (one budget per user per Month/Year)
 budgetSchema.index({ userId: 1, month: 1, year: 1 }, { unique: true });
 
-// Pre-save middleware to calculate totals
-budgetSchema.pre("save", function (next) {
-  this.plannedTotal = this.categories.reduce(
-    (sum, cat) => sum + cat.plannedAmount,
-    0
-  );
-  this.actualTotal = this.categories.reduce(
-    (sum, cat) => sum + cat.actualAmount,
-    0
-  );
-  next();
-});
-
 const Budget = mongoose.model("Budget", budgetSchema);
 export default Budget;
