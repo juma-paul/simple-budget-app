@@ -36,14 +36,18 @@ export default function GoogleOAuth() {
         return;
       }
 
-      // User is authenticated (existing user or new user after consent)
       if (data?.data) {
-        setNotification("success", data.message || "Signed in successfully!");
+        setNotification("success", data.message || "Login successful!");
+        setFormData({ identifier: "", password: "" });
 
         setTimeout(() => {
           setUser(data.data);
           clearNotification();
-          navigate("/dashboard");
+          if (data.data.isDeleted) {
+            navigate("/dashboard/profile", { replace: true });
+          } else {
+            navigate("/dashboard", { replace: true });
+          }
         }, 1500);
       }
     },
