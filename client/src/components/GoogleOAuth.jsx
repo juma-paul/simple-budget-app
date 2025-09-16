@@ -38,7 +38,6 @@ export default function GoogleOAuth() {
 
       if (data?.data) {
         setNotification("success", data.message || "Login successful!");
-        setFormData({ identifier: "", password: "" });
 
         setTimeout(() => {
           setUser(data.data);
