@@ -95,12 +95,7 @@ export const logIn = async (req, res, next) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return successResponse(
-      res,
-      200,
-      `Login successful. Welcome back ${user.username}!`,
-      userData
-    );
+    return successResponse(res, 200, `Logged in successfully!`, userData);
   } catch (error) {
     console.log("Login Error:", error);
     return next(
@@ -170,12 +165,7 @@ export const google = async (req, res, next) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      return successResponse(
-        res,
-        200,
-        `Login successful. Welcome back ${user.username}!`,
-        userData
-      );
+      return successResponse(res, 200, `Logged in successfully!`, userData);
     } else {
       // NEW USER LOGIC - Check for consent first
       if (!consentAccepted) {
