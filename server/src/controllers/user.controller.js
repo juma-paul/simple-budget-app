@@ -36,7 +36,6 @@ export const updateUser = async (req, res, next) => {
       return next(errorHandler(404, "User not found."));
     }
 
-    // Check if any fields actually changed (excluding password logic)
     let hasChanges = false;
     for (const key in updateFields) {
       if (
@@ -99,27 +98,41 @@ export const deleteUser = async (req, res, next) => {
       return next(errorHandler(404, "User not found!"));
     }
 
-    const validPassword = await bcrypt.compare(
-      req.body.currentPassword,
-      user.password
-    );
-    if (!validPassword) {
-      return next(errorHandler(401, "The password you entered is incorrect."));
+    const { currentPassword, emailConfirmation } = req.body;
+
+    // Either password or email must be provided
+    if (!currentPassword && !emailConfirmation) {
+      return next(
+        errorHandler(400, "Provide either your password or email to confirm.")
+      );
+    }
+
+    // If password is provided, verify it
+    if (currentPassword) {
+      const validPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!validPassword) {
+        return next(errorHandler(401, "The password you entered is incorrect."));
+      }
+    }
+
+    // If email is provided, verify it
+    if (emailConfirmation) {
+      if (emailConfirmation !== user.email) {
+        return next(errorHandler(401, "The email you entered is incorrect."));
+      }
     }
 
     // Schedule soft delete
     user.isDeleted = true;
     user.deletionScheduledAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 Days
-    const formatedDate = user.deletionScheduledAt.toLocaleDateString(
-      undefined,
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }
-    );
+    const formatedDate = user.deletionScheduledAt.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
     await user.save();
 
+    // Clear cookies
     const isProd = process.env.NODE_ENV === "production";
     const cookieOptions = {
       httpOnly: true,
@@ -140,6 +153,7 @@ export const deleteUser = async (req, res, next) => {
     return next(errorHandler(500, "Failed to delete user."));
   }
 };
+
 
 // Restore deleted user within 30 days
 export const restoreUser = async (req, res, next) => {
