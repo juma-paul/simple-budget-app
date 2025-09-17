@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Trash2, Edit3, Plus, DollarSign, Check, X } from "lucide-react";
+import { Trash2, Edit3, Plus, Check, X } from "lucide-react";
 import { useBudgetStore } from "../../store/budgetStore.js";
 import { useNotificationStore } from "../../store/notificationStore.js";
 import CurrencyInputField from "../CurrencyInputField.jsx";
 import Notification from "../Notification.jsx";
+import getCurrencySymbol from "../../utils/getCurrencySymbol.js";
 
 export default function Step2() {
   const tempData = useBudgetStore((s) => s.tempData);
@@ -334,7 +335,9 @@ export default function Step2() {
 
         {tempData.categories.length === 0 && !showAddForm && (
           <div className="text-center py-12 text-gray-400">
-            <DollarSign size={48} className="mx-auto mb-4 opacity-50" />
+            <div className="text-5xl mx-auto mb-4 opacity-50">
+              {getCurrencySymbol(tempData.currency)}
+            </div>
             <p className="text-lg mb-2">No categories added yet</p>
             <p className="text-sm">
               Add your first budget category to get started
