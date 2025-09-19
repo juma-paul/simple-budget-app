@@ -51,6 +51,7 @@ export default function Step3() {
     currency: tempData.currency,
     month: monthMap[tempData.month] || 0,
     year: tempData.year,
+    currency: tempData.currency,
     notes: tempData.notes,
     categories: tempData.categories.map((cat, i) => ({
       name: cat.name,

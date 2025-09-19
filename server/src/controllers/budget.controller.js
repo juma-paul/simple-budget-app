@@ -2,67 +2,64 @@ import Budget from "../models/budget.model.js";
 import { errorHandler } from "../utils/errorHandler.js";
 import { successResponse } from "../utils/successResponse.js";
 
+// Create Budget
 export const createBudget = async (req, res, next) => {
   if (req.userId !== req.params.id) {
-    return next(
-      errorHandler(403, "You are not authorized to create a budget!")
-    );
+    return next(errorHandler(403, "You are not authorized to create a budget!"));
   }
 
   try {
-    const { totalBudget, month, year, categories = [], notes } = req.body;
+    const { totalBudget, currency, month, year, categories = [], notes } = req.body;
 
-    if (!totalBudget || !month || !year) {
-      return next(errorHandler(400, "Missing required fields!"));
+    // Validate required fields
+    if (totalBudget === undefined || month === undefined || year === undefined) {
+      return next(errorHandler(400, "Missing required fields: totalBudget, month, or year"));
     }
 
-    if (!Array.isArray(categories)) {
-      console.log("Categories should be an array");
+    if (isNaN(totalBudget) || totalBudget <= 0) {
+      return next(errorHandler(400, "Total budget must be a positive number"));
     }
 
-    // Sum of allocated amounts must not exceed totalBudget
-    const totalAllocated = categories.reduce(
-      (sum, cat) => sum + cat.plannedAmount,
-      0
-    );
+    // Validate categories
+    const validatedCategories = categories.map((cat, index) => {
+      if (!cat.name || cat.name.trim() === "") {
+        throw new Error(`Category at index ${index} has an invalid or empty name`);
+      }
+      if (isNaN(cat.plannedAmount) || cat.plannedAmount < 0) {
+        throw new Error(`Category at index ${index} has an invalid planned amount`);
+      }
+      return {
+        name: cat.name.trim(),
+        plannedAmount: cat.plannedAmount,
+        actualAmount: cat.actualAmount || 0,
+      };
+    });
 
-    if (totalAllocated > totalBudget) {
-      return next(errorHandler(400, "Allocated amounts exceed total budget."));
-    }
-
-    // Check for existing budget for user/month/year
+    // Check existing budget
     const existingBudget = await Budget.findOne({
       userId: req.userId,
       month,
       year,
     });
-
     if (existingBudget) {
-      return next(
-        errorHandler(400, `Budget for ${month}/${year} already exists`)
-      );
+      return next(errorHandler(400, `Budget for ${month}/${year} already exists`));
     }
 
-    // Create Budget - map categories with order index
+    // Create budget
     const budget = new Budget({
       userId: req.userId,
-      totalBudget,
+      plannedTotal: totalBudget,
+      actualTotal: 0,
+      currency: currency || "USD",
       month,
       year,
       notes,
-      categories: categories.map((cat, index) => ({
-        name: cat.name,
-        plannedAmount: cat.plannedAmount ?? 0,
-        actualAmount: cat.actualAmount ?? 0,
-        order: index,
-      })),
+      categories: validatedCategories,
     });
 
     await budget.save();
-
     return successResponse(res, 201, "Budget created successfully", budget);
   } catch (error) {
-    console.error(error);
-    return next(errorHandler(500, "Failed to create budget!"));
+    return next(errorHandler(400, error.message || "Failed to create budget"));
   }
 };

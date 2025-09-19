@@ -37,6 +37,12 @@ const budgetSchema = new mongoose.Schema(
       required: true,
       min: 1900,
     },
+    currency: {
+      type: String,
+      required: true,
+      default: "USD",
+      trim: true,
+    },
     plannedTotal: {
       type: Number,
       required: true,
