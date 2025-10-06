@@ -110,7 +110,7 @@ docker login
 docker push yourdockerhub/the-simple-budget-app
 ```
 
-The app is deployed on *Render*: [https://your-render-app.onrender.com](https://your-render-app.onrender.com) *(replace with your Render URL)*.
+The app is deployed on *Render*: [https://your-render-app.onrender.com](https://your-render-app.onrender.com).
 
 ---
 
@@ -238,7 +238,6 @@ This project is licensed under the [*MIT License*](./LICENSE).
 
 Explore the live demo: [https://your-render-app.onrender.com](https://your-render-app.onrender.com) *(replace with your Render URL)*.
 
-*For MLH fellowship submissions, consider adding a 1-2 minute demo video showcasing key features!*
 
 ---
 
