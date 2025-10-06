@@ -2,6 +2,8 @@
 
 *The Simple Budget App* is a **modern, full-stack budgeting platform** designed for individuals seeking an *intuitive*, *privacy-focused* way to manage their finances. Built with the **MERN stack** (*MongoDB*, *Express.js*, *React*, *Node.js*) and styled with **Tailwind CSS**, it offers *personalized budgeting*, *category management*, and *real-time spend tracking*. Deployed as a *containerized application* on **Render**, it ensures *scalability*, *security*, and *ease of use*.
 
+![Main Page](screenshots/main-page.png)
+
 ---
 
 ## ✨ Features
@@ -127,9 +129,9 @@ The app is deployed on *Render*: [https://the-simple-budget-app.onrender.com](ht
 
 ## 📸 Screenshots
 
-| **Main Dashboard**                    | **Budget Creation Form**            | **Budget Table View**             |
+| **Login**                    | **Budget Creation Form**            | **Budget Table View**             |
 |:--------------------------------------:|:-----------------------------------:|:---------------------------------:|
-| ![Dashboard Screenshot](screenshots/dashboard.png) | ![Budget Creation](screenshots/new-budget.png) | ![Budget Table](screenshots/budget-table.png) |
+| ![Dashboard Screenshot](screenshots/login.png) | ![Budget Creation](screenshots/step2.png) | ![Budget Table](screenshots/see-budget.png) |
 
 ---
 
