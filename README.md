@@ -110,7 +110,7 @@ docker login
 docker push yourdockerhub/the-simple-budget-app
 ```
 
-The app is deployed on *Render*: [https://your-render-app.onrender.com](https://your-render-app.onrender.com).
+The app is deployed on *Render*: [https://the-simple-budget-app.onrender.com](https://the-simple-budget-app.onrender.com).
 
 ---
 
@@ -130,8 +130,6 @@ The app is deployed on *Render*: [https://your-render-app.onrender.com](https://
 | **Main Dashboard**                    | **Budget Creation Form**            | **Budget Table View**             |
 |:--------------------------------------:|:-----------------------------------:|:---------------------------------:|
 | ![Dashboard Screenshot](screenshots/dashboard.png) | ![Budget Creation](screenshots/new-budget.png) | ![Budget Table](screenshots/budget-table.png) |
-
-*Add screenshots to the `screenshots/` directory and update the paths above for a professional presentation!*
 
 ---
 
@@ -236,7 +234,7 @@ This project is licensed under the [*MIT License*](./LICENSE).
 
 ## 🌐 Demo
 
-Explore the live demo: [https://your-render-app.onrender.com](https://your-render-app.onrender.com) *(replace with your Render URL)*.
+Explore the live demo: [https://the-simple-budget-app.onrender.com](https://the-simple-budget-app.onrender.com).
 
 
 ---
@@ -245,7 +243,7 @@ Explore the live demo: [https://your-render-app.onrender.com](https://your-rende
 
 For questions, feedback, or issues, please:
 - Open a *GitHub issue*.
-- Contact the maintainer at [your-email@example.com](mailto:your-email@example.com) *(replace with your contact email)*.
+- Contact the maintainer at [your-email@example.com](mailto:your-email@example.com).
 
 ---
 
