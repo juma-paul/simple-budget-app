@@ -53,7 +53,7 @@
 ### 1. Clone and Install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/the-simple-budget-app.git
+git clone https://github.com/juma-paul/the-simple-budget-app.git
 cd the-simple-budget-app
 npm install
 ```
@@ -194,22 +194,22 @@ export const signUp = async (req, res, next) => {
 
 ```
 the-simple-budget-app/
-├── client/                   # *React frontend*
-│   ├── api/                  # *API calls with TanStack Query*
-│   ├── components/           # *Reusable UI components (e.g., Loading, Notification)*
-│   ├── pages/                # *Page components (SignUp, Login, SeeBudget, etc.)*
-│   ├── store/                # *Zustand stores for state management*
-│   └── dist/                 # *Production build output*
-├── server/                   # *Node.js/Express backend*
-│   ├── controllers/          # *Request handlers for API routes*
-│   ├── models/               # *Mongoose schemas (User, Budget, Expense)*
-│   ├── routes/               # *Express route definitions*
-│   ├── middleware/           # *Custom middleware (auth, validation, errors)*
-│   ├── tasks/                # *Background tasks (e.g., deleteExpiredUsers)*
-│   └── .env                  # *Environment variables*
-├── package.json              # *Monorepo configuration with workspaces*
-├── Dockerfile                # *Docker configuration*
-└── README.md                 # *Project documentation*
+├── client/                   # React frontend
+│   ├── api/                  # API calls with TanStack Query
+│   ├── components/           # Reusable UI components (e.g., Loading, Notification)
+│   ├── pages/                # Page components (SignUp, Login, SeeBudget, etc.)
+│   ├── store/                # Zustand stores for state management
+│   └── dist/                 # Production build output
+├── server/                   # Node.js/Express backend
+│   ├── controllers/          # Request handlers for API routes
+│   ├── models/               # Mongoose schemas (User, Budget, Expense)
+│   ├── routes/               # Express route definitions
+│   ├── middleware/           # Custom middleware (auth, validation, errors)
+│   ├── tasks/                # Background tasks (e.g., deleteExpiredUsers)
+│   └── .env                  # Environment variables
+├── package.json              # Monorepo configuration with workspaces
+├── Dockerfile                # Docker configuration
+└── README.md                 # Project documentation
 ```
 
 ---
@@ -238,14 +238,6 @@ This project is licensed under the [*MIT License*](./LICENSE).
 
 Explore the live demo: [https://the-simple-budget-app.onrender.com](https://the-simple-budget-app.onrender.com).
 
-
----
-
-## 📬 Contact
-
-For questions, feedback, or issues, please:
-- Open a *GitHub issue*.
-- Contact the maintainer at [your-email@example.com](mailto:your-email@example.com).
 
 ---
 
